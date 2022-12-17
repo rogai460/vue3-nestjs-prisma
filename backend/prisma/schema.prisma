@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  posts Post[]
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean? @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  Int?
+}
+
+model Engineer {
+  id               Int              @id @default(autoincrement())
+  lastName         String
+  firstName        String?
+  lastNameKana     String?
+  firstNameKana    String?
+  sex              Int?
+  employeeId       Int?
+  employeeCategory Int?
+  laborCost        Int?
+  company          String?
+  projectHistory   ProjectHistory[]
+}
+
+model Project {
+  id              Int              @id @default(autoincrement())
+  projectNameMask String?
+  projectName     String
+  startDate       DateTime
+  endDate         DateTime?
+  createdAt       DateTime         @default(now())
+  updateAt        DateTime         @default(now())
+  endUser         String
+  projectHistory  ProjectHistory[]
+}
+
+model ProjectHistory {
+  id         Int       @id @default(autoincrement())
+  startDate  DateTime
+  endDate    DateTime?
+  sales      Int
+  cost       Int?
+  createdAt  DateTime  @default(now())
+  updateAt   DateTime  @default(now())
+  project    Project   @relation(fields: [projectId], references: [id])
+  projectId  Int
+  engineer   Engineer  @relation(fields: [engineerId], references: [id])
+  engineerId Int
+}
