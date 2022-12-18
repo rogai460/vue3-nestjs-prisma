@@ -36,4 +36,4 @@ lerna-debug.log*
 
 # 追加
 dev.dev
-./public/*
+/public/*

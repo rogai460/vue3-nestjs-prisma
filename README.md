@@ -102,14 +102,16 @@ curl -XPOST -H "Content-Type: application/json" -d '{"email":"aaa@bbb.com","name
 # 取得
 curl -XGET http://127.0.0.1:3000/user/1
 ```
-```bash
-npm install --save @nestjs/serve-static
-
-```
-
 
 ```bash
 npm create vite@latest
 cd frontend
 npm install
 ```
+
+## NestJsでHTMLを表示できるようにする
+```bash
+npm install --save @nestjs/serve-static
+```
+
+
