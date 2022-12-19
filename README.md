@@ -2,7 +2,7 @@
 
 ## NestJs
 
-```
+```bash
 git clone git@github.com:rogai460/vue3-nestjs-prisma.git
 cd vue3-nestjs-prisma
 ```
@@ -21,7 +21,7 @@ npm install @prisma/client
 npx prisma init --datasource-provider sqlite
 ```
 
-`./prisma/schema.prisma`に追加
+`.backend/src/prisma/schema.prisma`に追加
 
 ```prisma
 model User {
@@ -46,12 +46,12 @@ model Post {
 ```bash
 npx prisma migrate dev --name init
 npx prisma generate
+npx prisma db seed
 ```
 
 ---
 
-`touch ./src/prisma.service.ts`
-[./src/prisma.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/prisma.service.ts)
+- [./backend/src/prisma.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/prisma.service.ts)
 
 ---
 
@@ -61,14 +61,11 @@ npx nest g service user
 npx nest g controller user
 ```
 
-`./src/user/user.controller.ts`
-[./src/user/user.controller.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/user/user.controller.ts)
+- [./src/user/user.controller.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/user/user.controller.ts)
 
-`./src/user/user.service.ts`
-[./src/user/user.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/user/user.service.ts)
+[./backend/src/user/user.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/user/user.service.ts)
 
-`./src/user/user.module.ts`
-[./src/user/user.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/user/user.module.ts)
+[./backend/src/user/user.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/user/user.module.ts)
 
 ---
 
@@ -78,18 +75,13 @@ npx nest g service post
 npx nest g controller post
 ```
 
-`./src/post/post.controller.ts`
-[./src/post/post.controller.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/post/post.controller.ts)
+- [./backend/src/post/post.controller.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/post/post.controller.ts)
 
-`touch ./src/post/post.service.ts`
-`./src/post/post.service.ts`
-[./src/post/post.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/post/post.service.ts)
+- [./backend/src/post/post.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/post/post.service.ts)
 
-`touch ./src/post/post.module.ts`
-[./src/post/post.module.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/post/post.module.ts)
+[./backend/src/post/post.module.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/post/post.module.ts)
 
-`touch ./src/app.module.ts`
-[./src/app.module.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/app.module.ts)
+- [./backend/src/app.module.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/app.module.ts)
 
 ---
 
@@ -103,15 +95,68 @@ curl -XPOST -H "Content-Type: application/json" -d '{"email":"aaa@bbb.com","name
 curl -XGET http://127.0.0.1:3000/user/1
 ```
 
+## Vue3
+
 ```bash
+cd vue3-nestjs-prisma
 npm create vite@latest
 cd frontend
 npm install
 ```
 
-## NestJsでHTMLを表示できるようにする
+###
+
+https://tailwindcss.com/docs/guides/vite#vue
+
+```
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+https://github.com/rogai460/vue3-nestjs-prisma/blob/main/frontend/tailwind.config.cjs
+https://github.com/rogai460/vue3-nestjs-prisma/blob/main/frontend/src/style.css
+
+`./frontend/src/App.vue`
+
+```vue
+<script setup lang="ts">
+import HelloWorld from "./components/HelloWorld.vue";
+</script>
+
+<template>
+  <div class="container mx-auto">
+    <h1 class="text-3xl font-bold underline">Hello world!</h1>
+    <HelloWorld msg="Vite + Vue" />
+  </div>
+</template>
+
+<style scoped></style>
+```
+
+## Vue3 と NestJs の連携
+
+### Vue3 のビルド結果を backend の`public`に出力するようにする
+
+```bash
+cd  vue3-nestjs-prisma/frontend
+```
+
+[./frontend/vite.config.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/frontend/vite.config.ts)
+
+### NestJs で HTML を表示できるようにする
+
+```bash
+cd  vue3-nestjs-prisma/backend
+```
+
 ```bash
 npm install --save @nestjs/serve-static
 ```
 
+[./backend/src/app.module.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/app.module.ts)
 
+
+
+npx nest g module projectInf
+npx nest g service projectInf
+npx nest g controller projectInf

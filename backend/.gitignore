@@ -37,3 +37,4 @@ lerna-debug.log*
 # 追加
 dev.dev
 /public/*
+/prisma/seed/table/production/*

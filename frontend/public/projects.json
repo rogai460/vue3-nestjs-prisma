@@ -1,0 +1,38 @@
+[
+    {
+      "projectId": 1,
+      "projectNameMask": "Y案件",
+      "projectName": "山田商店自動決済プロジェクト",
+      "startDate": "2017-09-24T00:00:00.000Z",
+      "endDate": null,
+      "endUser": "山田商店",
+      "projectHistory": [
+        {
+          "startDate": "2017-09-24T00:00:00.000Z",
+          "endDate": null,
+          "sales": 850000,
+          "cost": 681000,
+          "profit": 50,
+          "profitRate": 0.5,
+          "engineerId": 1,
+          "fullName": "山田 太郎",
+          "fullNameKana": "ヤマダ タロウ",
+          "sex": "男",
+          "company": "男"
+        },
+        {
+          "startDate": "2017-09-24T00:00:00.000Z",
+          "endDate": null,
+          "sales": 100,
+          "cost": 50,
+          "profit": 50,
+          "profitRate": 0.5,
+          "engineerId": 2,
+          "fullName": "田中 次郎",
+          "fullNameKana": "タナカ ジロウ",
+          "sex": "男",
+          "company": ""
+        }
+      ]
+    }
+  ]
