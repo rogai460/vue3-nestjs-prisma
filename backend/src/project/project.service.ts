@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { Project } from '@prisma/client';
 
 export interface ProjectResponse {
   projectId: number;
@@ -29,6 +30,10 @@ export interface ProjectHistoryResponse {
 export class ProjectService {
   constructor(private prisma: PrismaService) {}
 
+  async projects(): Promise<Project[]> {
+    return this.prisma.project.findMany({});
+  }
+
   async history(): Promise<ProjectResponse[]> {
     const findProject = this.prisma.project.findMany({
       include: {
@@ -40,6 +45,8 @@ export class ProjectService {
                 firstName: true,
                 lastNameKana: true,
                 firstNameKana: true,
+                employeeCategory: true,
+                laborCost: true,
                 sex: true,
                 company: true,
               },
@@ -60,13 +67,14 @@ export class ProjectService {
         startDate: ph.startDate,
         endDate: ph.endDate,
         sales: ph.sales,
-        cost: ph.cost,
+        cost:
+          ph.engineer.employeeCategory === 0 ? ph.engineer.laborCost : ph.cost,
         engineerId: ph.engineerId,
         lastName: ph.engineer.lastName,
         firstName: ph.engineer.firstName,
         lastNameKana: ph.engineer.lastNameKana,
         firstNameKana: ph.engineer.firstNameKana,
-        sex: ph.engineer.sex == 0 ? '男' : '女',
+        sex: ph.engineer.sex == 0 ? '男性' : '女性',
         company: ph.engineer.company,
       })),
     }));

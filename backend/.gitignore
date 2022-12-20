@@ -35,6 +35,6 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # 追加
-dev.dev
+/prisma/dev.db
 /public/*
-/prisma/seed/table/production/*
+/prisma/seed/table/production/*.ts

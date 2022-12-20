@@ -1,25 +1,79 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-const table1 = ref();
-const projectInfo = ref();
-const data = ref();
+
+export interface ProjectResponse {
+  projectId: string;
+  projectNameMask: string;
+  projectName: string;
+  // startDate: Date;
+  // endDate: Date | null;
+  // endUser: string;
+  projectHistory: ProjectHistoryResponse[];
+}
+
+export interface Project {
+  id: string;
+  projectNameMask: string;
+  projectName: string;
+  // startDate: Date;
+  // endDate: Date | null;
+  // endUser: string;
+}
+
+export interface ProjectHistoryResponse {
+  // startDate: string;
+  // endDate: string | null;
+  // engineerId: number;
+  sales: number;
+  cost: number;
+  lastName: string;
+  firstName: string | null;
+  lastNameKana: string | null;
+  firstNameKana: string | null;
+  sex: string | null;
+  company: string | null;
+}
+
+const projectInfo = ref<ProjectResponse>();
+const data = ref<ProjectHistoryResponse[]>();
 const refSumSales = ref<number>(0);
 const refSumCost = ref<number>(0);
 const refAveCost = ref<number>(0);
 const refSumProfit = ref<number>(0);
 const refSumProfitRate = ref<number>(0);
+const projectId = ref<string>();
+const projectList = ref<Project[]>([]);
 const error = ref(null);
-const getData = async () => {
+const getProject = async () => {
   try {
-    const response = await fetch("../projects.json");
+    const response = await fetch("../production/project.json");
+    console.log(response); //statusが OKか確認する。
+    if (!response.ok) {
+      throw Error("No data available");
+    }
+    projectList.value = await response.json();
+  } catch (err: any) {
+    error.value = err.message;
+    console.log(error.value);
+  }
+};
+const getProjectHistory = async () => {
+  try {
+    const response = await fetch("../production/project/history.json");
     console.log(response); //statusが OKか確認する。
     if (!response.ok) {
       //okというプロパティがありtrue/falseで返す
       throw Error("No data available");
     }
-    const json = await response.json();
-    const projectHistory = json[0].projectHistory;
-    projectInfo.value = json[0];
+    const json: ProjectResponse[] = await response.json();
+    const project: ProjectResponse = json.find(
+      (p) => String(p.projectId) === String(projectId.value)
+    );
+    if (!project) {
+      return;
+    }
+    const projectHistory: ProjectHistoryResponse[] = project.projectHistory;
+    projectInfo.value = project;
 
     const sumSales = projectHistory.reduce(
       (sumSales: number, ph) => sumSales + ph.sales,
@@ -27,7 +81,7 @@ const getData = async () => {
     );
     refSumSales.value = sumSales;
 
-    const sumCost:number = projectHistory.reduce(
+    const sumCost: number = projectHistory.reduce(
       (sumCost: number, ph) => sumCost + ph.cost,
       0
     );
@@ -45,10 +99,10 @@ const getData = async () => {
       {
         sales: sumSales,
         cost: sumCost,
-        profit: sumProfit,
-        profitRate: sumProfitRate,
-        fullName: "合計",
-        fullNameKana: "",
+        lastName: "合計",
+        firstName: "",
+        lastNameKana: "",
+        firstNameKana: "",
         sex: "",
         company: "",
       },
@@ -59,29 +113,64 @@ const getData = async () => {
   }
 };
 onMounted(() => {
-  getData();
+  getProject();
+  getProjectHistory();
 });
-const thead = ["フルネーム", "カナ", "性別", "売", "コスト", "利益", "利益率"];
-const tbody = [
-  "fullName",
-  "fullNameKana",
-  "sex",
-  {
-    field: "sales",
-    fn: (data) => {
-      return `¥ ${data.sales.toLocaleString()}`;
-    },
-  },
-  "cost",
-  "profit",
-  "profitRate",
+function projectChange(e: any) {
+  projectId.value = e.target.value;
+  getProjectHistory();
+}
+
+const thead = [
+  "フルネーム",
+  "カナ",
+  "性別",
+  "売上",
+  "コスト",
+  "利益",
+  "利益率",
 ];
+// const tbody = [
+//   "fullName",
+//   "fullNameKana",
+//   "sex",
+//   {
+//     field: "sales",
+//     fn: (data) => {
+//       return `¥ ${data.sales.toLocaleString()}`;
+//     },
+//   },
+//   "cost",
+//   "profit",
+//   "profitRate",
+// ];
 </script>
 
 <template>
+  <h1 class="text-3xl font-bold underline">
+    {{ projectInfo?.projectName }}
+  </h1>
   <div class="w-full px-4 md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
-    <!--Console Content-->
+    <div class="flex justify-left">
+      <div class="mb-3 xl:w-96">
+        <select
+          v-model="projectId"
+          v-on:change="projectChange"
+          class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
+          aria-label="Default select example"
+        >
+          <option
+            v-for="option in projectList"
+            :key="option.id"
+            :value="option.id"
+          >
+            {{ option.projectNameMask }}
+          </option>
+        </select>
+      </div>
+    </div>
 
+    <!--Console Content-->
     <div class="flex flex-wrap">
       <div class="w-full md:w-1/2 xl:w-1/3 p-3">
         <!--Metric Card-->
@@ -145,56 +234,59 @@ const tbody = [
             <div class="flex-1 text-right md:text-center">
               <h5 class="font-bold uppercase text-gray-500">平均単価</h5>
               <h3 class="font-bold text-3xl">
-                {{ refAveCost?.toLocaleString() }}
+                ¥ {{ Math.round(refAveCost)?.toLocaleString() }}
               </h3>
             </div>
           </div>
         </div>
         <!--/Metric Card-->
       </div>
-
     </div>
 
     <!--Divider-->
     <hr class="border-b-2 border-gray-400 my-8 mx-4" />
 
     <!-- <div class="w-full p-3"> -->
-      <!--Table Card-->
-      <div class="bg-white border rounded shadow">
-        <div class="border-b p-3">
-          <h5 class="font-bold uppercase text-gray-600">Table</h5>
-        </div>
-        <div class="p-5">
-          <table class="w-full p-5 text-gray-700">
-            <thead>
-              <tr>
-                <th v-for="th in thead" class="text-left text-blue-900">
-                  {{ th }}
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr v-for="dt in data">
-                <td>{{ dt.fullName }}</td>
-                <td>{{ dt.fullNameKana }}</td>
-                <td>{{ dt.sex }}</td>
-                <td>¥ {{ dt.sales.toLocaleString() }}</td>
-                <td>¥ {{ dt.cost.toLocaleString() }}</td>
-                <td>¥ {{ (dt.sales - dt.cost).toLocaleString() }}</td>
-                <td>
-                  {{
-                    Math.round(((dt.sales - dt.cost) / dt.sales) * 100 * 10) /
-                    10
-                  }}
-                  %
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <!--Table Card-->
+    <div class="bg-white border rounded shadow">
+      <div class="border-b p-3">
+        <h5 class="font-bold uppercase text-gray-600">
+          {{ projectInfo?.projectNameMask }} 詳細
+        </h5>
       </div>
-      <!--/table Card-->
+      <div class="p-5">
+        <table class="w-full p-5 text-gray-700">
+          <thead>
+            <tr>
+              <th v-for="th in thead" class="text-center text-blue-900">
+                {{ th }}
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr v-for="dt in data">
+              <td>{{ dt.lastName }} {{ dt.firstName }}</td>
+              <td>{{ dt.lastNameKana }} {{ dt.firstNameKana }}</td>
+              <td class="text-center">{{ dt.sex }}</td>
+              <td class="text-right">¥ {{ dt.sales?.toLocaleString() }}</td>
+              <td class="text-right">¥ {{ dt.cost?.toLocaleString() }}</td>
+              <td class="text-right">
+                ¥ {{ (dt.sales - dt.cost).toLocaleString() }}
+              </td>
+              <td class="text-right">
+                {{
+                  Math.round(((dt.sales - dt.cost) / dt.sales) * 100 * 10) / 10
+                }}
+                %
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+    <!--/table Card-->
+  </div>
+
   <!-- </div> -->
 </template>

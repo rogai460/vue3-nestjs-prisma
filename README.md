@@ -1,5 +1,11 @@
 # vue3-nestjs-prisma
 
+touch .env
+
+```
+DATABASE_URL="file:./dev.db"
+```
+
 ## NestJs
 
 ```bash
@@ -154,8 +160,6 @@ npm install --save @nestjs/serve-static
 ```
 
 [./backend/src/app.module.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/app.module.ts)
-
-
 
 npx nest g module projectInf
 npx nest g service projectInf
