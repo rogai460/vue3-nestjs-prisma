@@ -55,6 +55,10 @@ npx prisma generate
 npx prisma db seed
 ```
 
+```
+npx prisma studio
+```
+
 ---
 
 - [./backend/src/prisma.service.ts](https://github.com/rogai460/vue3-nestjs-prisma/blob/main/backend/src/prisma.service.ts)
@@ -164,3 +168,6 @@ npm install --save @nestjs/serve-static
 npx nest g module projectInf
 npx nest g service projectInf
 npx nest g controller projectInf
+
+
+https://github.com/tailwindtoolbox/Admin-Template

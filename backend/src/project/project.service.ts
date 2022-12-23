@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { Project } from '@prisma/client';
+import { beginningMonthDay, endMonthDay } from '../util/dateUtil';
 
 export interface ProjectResponse {
   projectId: number;
@@ -13,6 +14,7 @@ export interface ProjectResponse {
 }
 
 export interface ProjectHistoryResponse {
+  id: number;
   startDate: Date;
   endDate: Date | null;
   engineerId: number;
@@ -34,11 +36,23 @@ export class ProjectService {
     return this.prisma.project.findMany({});
   }
 
-  async history(): Promise<ProjectResponse[]> {
+  async history(year: number, month: number): Promise<ProjectResponse[]> {
     const findProject = this.prisma.project.findMany({
-      include: {
+      select: {
+        id: true,
+        projectNameMask: true,
+        projectName: true,
+        startDate: true,
+        endDate: true,
+        endUser: true,
         projectHistory: {
-          include: {
+          select: {
+            id: true,
+            startDate: true,
+            endDate: true,
+            sales: true,
+            cost: true,
+            engineerId: true,
             engineer: {
               select: {
                 lastName: true,
@@ -52,6 +66,23 @@ export class ProjectService {
               },
             },
           },
+          where: {
+            startDate: {
+              lte: endMonthDay(year, month),
+            },
+            OR: [
+              {
+                endDate: {
+                  gte: beginningMonthDay(year, month),
+                },
+              },
+              {
+                endDate: {
+                  equals: null,
+                },
+              },
+            ],
+          },
         },
       },
     });
@@ -64,6 +95,7 @@ export class ProjectService {
       endDate: fp.endDate,
       endUser: fp.endUser,
       projectHistory: fp.projectHistory.map((ph) => ({
+        id: ph.id,
         startDate: ph.startDate,
         endDate: ph.endDate,
         sales: ph.sales,

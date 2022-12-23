@@ -15,7 +15,6 @@ async function main() {
   await prisma.engineer.deleteMany();
   await prisma.project.deleteMany();
 
-
   await dummyEngineer();
   await dummyProject();
   await dummyProjectHistory();

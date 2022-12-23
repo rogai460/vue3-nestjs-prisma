@@ -27,17 +27,18 @@ model Post {
 }
 
 model Engineer {
-  id               Int              @id @default(autoincrement())
-  lastName         String
-  firstName        String?
-  lastNameKana     String?
-  firstNameKana    String?
-  sex              Int?
-  employeeId       Int?
-  employeeCategory Int?
-  laborCost        Int?
-  company          String?
-  projectHistory   ProjectHistory[]
+  id                Int              @id @default(autoincrement())
+  lastName          String
+  firstName         String?
+  lastNameKana      String?
+  firstNameKana     String?
+  sex               Int?
+  employeeId        Int?
+  employeeCategory  Int?
+  laborCost         Int?
+  company           String?
+  affiliatedCompany String?
+  projectHistory    ProjectHistory[]
 }
 
 model Project {
@@ -53,15 +54,16 @@ model Project {
 }
 
 model ProjectHistory {
-  id         Int       @id @default(autoincrement())
-  startDate  DateTime
-  endDate    DateTime?
-  sales      Int
-  cost       Int?
-  createdAt  DateTime  @default(now())
-  updateAt   DateTime  @default(now())
-  project    Project   @relation(fields: [projectId], references: [id])
-  projectId  Int
-  engineer   Engineer  @relation(fields: [engineerId], references: [id])
-  engineerId Int
+  id            Int       @id @default(autoincrement())
+  startDate     DateTime
+  endDate       DateTime?
+  contractType  Int?
+  sales         Int
+  cost          Int?
+  createdAt     DateTime  @default(now())
+  updateAt      DateTime  @default(now())
+  project       Project   @relation(fields: [projectId], references: [id])
+  projectId     Int
+  engineer      Engineer  @relation(fields: [engineerId], references: [id])
+  engineerId    Int
 }

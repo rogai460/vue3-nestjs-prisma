@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Query, Param, Post, Body } from '@nestjs/common';
 import { ProjectService, ProjectResponse } from './project.service';
 import { Project } from '@prisma/client';
 
@@ -12,7 +12,13 @@ export class ProjectController {
   }
 
   @Get('history')
-  async history(): Promise<ProjectResponse[]> {
-    return this.projectService.history();
+  async history(): // @Query('year') year: number,
+  // @Query('month') month: number,
+  Promise<ProjectResponse[]> {
+    const date = new Date();
+    return this.projectService.history(
+      Number(date.getFullYear()),
+      Number(date.getMonth() + 1),
+    );
   }
 }
