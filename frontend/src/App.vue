@@ -1,14 +1,9 @@
 <script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
-import ProjectDetail from "./components/ProjectDetail.vue";
+import Base from "@/pages/Base.vue";
 </script>
 
 <template>
-  <div class="container mx-auto">
-
-    <ProjectDetail />
-    <!-- <HelloWorld msg="Vite + Vue" /> -->
-  </div>
+  <Base />
 </template>
 
 <style scoped></style>

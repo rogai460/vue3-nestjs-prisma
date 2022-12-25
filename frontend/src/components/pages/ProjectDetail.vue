@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import ProjectDetailTable from "./ProjectDetailTable.vue";
-import ProjectDetailSummaryCard from "./ProjectDetailSummaryCard.vue";
+import ProjectDetailTable from "@/components/ProjectDetailTable.vue";
+import { AddRecordType } from "@/components/ProjectDetailAddRecordType1.vue";
+import ProjectDetailAddRecordType1 from "@/components/ProjectDetailAddRecordType1.vue";
+import ProjectDetailSummaryCard from "@/components/ProjectDetailSummaryCard.vue";
 
 export interface ProjectResponse {
   projectId: string;
@@ -49,17 +51,6 @@ const projectId = ref<string>();
 const projectList = ref<Project[]>([]);
 const error = ref(null);
 const selected = ref<string[]>([]);
-const addRecord = ref<{
-  id: string;
-  lastName: string;
-  sales: number;
-  cost: number;
-}>({
-  id: "",
-  lastName: "",
-  sales: 0,
-  cost: 0,
-});
 
 const getProject = async () => {
   try {
@@ -183,19 +174,19 @@ const changeNotExistsIds = (notExistsIds: string[]) => {
   updateProjectData2();
 };
 
-const addTable = () => {
-  if (addRecord.value.lastName === "") {
+const addTable = (addRecord: AddRecordType) => {
+  if (addRecord.lastName === "") {
     return;
   }
   tableData.value = [
     ...tableData.value,
     {
-      id: addRecord.value.lastName,
+      id: addRecord.id,
       startDate: "",
       endDate: "",
-      sales: addRecord.value.sales * 10000,
-      cost: addRecord.value.cost * 10000,
-      lastName: addRecord.value.lastName,
+      sales: addRecord.sales,
+      cost: addRecord.cost,
+      lastName: addRecord.lastName,
       firstName: "",
       lastNameKana: "",
       firstNameKana: "",
@@ -203,14 +194,8 @@ const addTable = () => {
       company: "",
     },
   ];
-  updateProjectData2();
 
-  addRecord.value = {
-    id: "",
-    lastName: "",
-    sales: 0,
-    cost: 0,
-  };
+  updateProjectData2();
 };
 
 onMounted(() => {
@@ -223,11 +208,15 @@ onMounted(() => {
   <div class="w-full md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
     <div class="flex justify-left">
       <div class="mb-3 xl:w-96">
+        <label
+          for="countries"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >案件選択</label
+        >
         <select
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="projectId"
           v-on:change="projectChange"
-          class="form-select appearance-none block w-full px-3 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding bg-no-repeat border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none"
-          aria-label="Default select example"
         >
           <option
             v-for="option in projectList"
@@ -239,7 +228,10 @@ onMounted(() => {
         </select>
       </div>
     </div>
-    <h1 class="px-4 py-3 text-3xl font-bold underline">
+
+    <h1
+      class="px-4 py-3 text-3xl font-bold underline text-gray-600 dark:text-white"
+    >
       {{ projectInfo?.projectName }}
     </h1>
 
@@ -258,75 +250,6 @@ onMounted(() => {
       @changeNotExistsIds="changeNotExistsIds"
     />
 
-    <div class="my-4">
-      <h5 class="text-xl font-medium text-gray-900 dark:text-white">
-        レコード追加（シミレーション用）
-      </h5>
-      <div
-        class="w-full p-4 bg-white border border-gray-200 rounded-lg shadow-md sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700"
-      >
-        <form class="grid grid-cols-4 gap-4" action="#">
-          <div>
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >名称</label
-            >
-            <input
-              type="text"
-              v-model="addRecord.lastName"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-              placeholder="名前"
-              required
-            />
-          </div>
-          <div>
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >売単価（万円）</label
-            >
-            <input
-              type="number"
-              v-model="addRecord.sales"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-              placeholder="100000"
-              required
-            />
-          </div>
-          <div>
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-              >買単価（万円）</label
-            >
-            <input
-              type="number"
-              v-model="addRecord.cost"
-              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-              placeholder="1000000"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            class="rounded-full bg-blue-600 hover:bg-blue-500 text-white rounded px-4 py-2"
-            @click="addTable"
-          >
-            追加
-          </button>
-          <div>
-            利益率：{{
-              addRecord.sales > 0 && addRecord.cost > 0
-                ? Math.round(
-                    ((addRecord.sales - addRecord.cost) / addRecord.sales) *
-                      100 *
-                      10
-                  ) / 10
-                : "-"
-            }}
-            %
-          </div>
-        </form>
-      </div>
-    </div>
+    <ProjectDetailAddRecordType1 @addTable="addTable" />
   </div>
 </template>
