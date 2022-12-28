@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { PostModule } from './post/post.module';
 import { ProjectModule } from './project/project.module';
-import { ProjectInfModule } from './project-inf/project-inf.module';
+import { EngineerModule } from './engineer/engineer.module';
 
 @Module({
   controllers: [AppController],
@@ -15,7 +15,7 @@ import { ProjectInfModule } from './project-inf/project-inf.module';
     UserModule,
     PostModule,
     ProjectModule,
-    ProjectInfModule,
+    EngineerModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),

@@ -97,6 +97,13 @@ const notExists = () => {
           </td>
         </tr>
       </tbody>
+      <tfoot>
+        <tr class="font-semibold text-gray-900 dark:text-white">
+          <th scope="row" class="py-3 px-6 text-base">Total</th>
+          <td class="py-3 px-6">3</td>
+          <td class="py-3 px-6">21,000</td>
+        </tr>
+      </tfoot>  
     </table>
   </div>
   <!-- </div> -->

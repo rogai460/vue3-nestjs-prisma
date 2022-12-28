@@ -54,16 +54,20 @@ model Project {
 }
 
 model ProjectHistory {
-  id            Int       @id @default(autoincrement())
-  startDate     DateTime
-  endDate       DateTime?
-  contractType  Int?
-  sales         Int
-  cost          Int?
-  createdAt     DateTime  @default(now())
-  updateAt      DateTime  @default(now())
-  project       Project   @relation(fields: [projectId], references: [id])
-  projectId     Int
-  engineer      Engineer  @relation(fields: [engineerId], references: [id])
-  engineerId    Int
+  id                      Int       @id @default(autoincrement())
+  startDate               DateTime
+  endDate                 DateTime?
+  expectedEndDate         DateTime?
+  utilizationRate         Decimal
+  salesContractCompany    String?
+  purchaseContractCompany String?
+  contractType            Int?
+  sales                   Int
+  cost                    Int?
+  createdAt               DateTime  @default(now())
+  updateAt                DateTime  @default(now())
+  project                 Project   @relation(fields: [projectId], references: [id])
+  projectId               Int
+  engineer                Engineer  @relation(fields: [engineerId], references: [id])
+  engineerId              Int
 }

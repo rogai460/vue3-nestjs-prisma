@@ -54,7 +54,8 @@ const selected = ref<string[]>([]);
 
 const getProject = async () => {
   try {
-    const response = await fetch("../production/project.json");
+    // const response = await fetch("../production/project.json");
+    const response = await fetch("http://127.0.0.1:3000/project");
     console.log(response); //statusが OKか確認する。
     if (!response.ok) {
       throw Error("No data available");
@@ -150,7 +151,8 @@ const updateProjectData2 = () => {
 };
 const getProjectHistory = async () => {
   try {
-    const response = await fetch("../production/project/history.json");
+    // const response = await fetch("../production/project/history.json");
+    const response = await fetch("http://127.0.0.1:3000/project/history");
     console.log(response); //statusが OKか確認する。
     if (!response.ok) {
       //okというプロパティがありtrue/falseで返す

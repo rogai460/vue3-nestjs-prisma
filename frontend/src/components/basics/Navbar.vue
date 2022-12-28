@@ -117,7 +117,7 @@
             <a
               href="#"
               class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              ><router-link to="/projectDetail"
+              ><router-link to="/project-detail"
                 >プロジェクト詳細</router-link
               ></a
             >
@@ -126,8 +126,9 @@
             <a
               href="#"
               class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 md:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >Pricing</a
             >
+              <router-link to="/engineer">エンジニア一覧</router-link>
+            </a>
           </li>
           <li>
             <a
