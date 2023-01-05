@@ -1,54 +1,25 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import EngineerDetailProjectHistoryTable from "@/components/EngineerDetailProjectHistoryTable.vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import ProjectHistoryTable from "@/components/EngineerDetail/ProjectHistoryTable.vue";
+import { EngineerWithHistoryResponse } from "@/@types/ApiReqRes";
 
-export interface ProjectHistoryInput {
+// defineProps<{
+//   engineerTableData: EngineerTable[];
+// }>();
+
+export interface ProjectHistoryPostInput {
   startDate: string | null;
+  endDate: string | null;
   expectedEndDate: string | null;
   utilizationRate: number | null;
+  salesContractCompany: string | null;
+  purchaseContractCompany: string | null;
+  contractType: number | null;
   sales: number | null;
   cost: number | null;
-  engineerId: number | null;
-  projectId: number | null;
-}
-export interface EngineerResponse {
-  id: string;
-  lastName: string;
-  firstName: string | null;
-  lastNameKana: string | null;
-  firstNameKana: string | null;
-  sex: number | null;
-  employeeId: string | null;
-  employeeCategory: number | null;
-  laborCost: number | null;
-  company: string | null;
-  projectHistory: ProjectHistoryResponse[];
-}
-
-export interface Project {
-  id: string;
-  projectNameMask: string;
-  projectName: string;
-  startDate: Date;
-  endDate: Date | null;
-  endUser: string;
-}
-
-export interface ProjectHistoryResponse {
-  id: string;
-  startDate: string;
-  endDate: string | null;
-  // engineerId: number;
-  sales: number;
-  cost: number;
-  lastName: string;
-  firstName: string | null;
-  lastNameKana: string | null;
-  firstNameKana: string | null;
-  sex: string | null;
-  company: string | null;
-  project: Project;
+  projectId: number;
+  engineerId: number;
 }
 
 export interface EngineerTable {
@@ -63,14 +34,34 @@ export interface EngineerTable {
 }
 
 const route = useRoute();
-const engineerId = ref<number>(0);
+const engineerResponse = ref<EngineerWithHistoryResponse>();
 
-const engineerResponse = ref<EngineerResponse>();
-const projectHistoryTableData = ref<ProjectHistoryResponse[]>([]);
-
+const projectHistoryTableData = computed(() =>
+  engineerResponse.value ? engineerResponse.value.projectHistory : []
+);
 const error = ref(null);
 
-const postProjectHistory = async (projectHistoryInput: ProjectHistoryInput) => {
+const getEngineer = async () => {
+  if (!route.query.engineerId) return;
+  try {
+    // const response = await fetch("../production/project.json");
+    const response = await fetch(
+      `http://127.0.0.1:3000/engineer/${route.query.engineerId}`
+    );
+    console.log(response); //statusが OKか確認する。
+    if (!response.ok) {
+      throw Error("No data available");
+    }
+
+    engineerResponse.value = await response.json();
+  } catch (err: any) {
+    error.value = err.message;
+    console.log(error.value);
+  }
+};
+const postProjectHistory = async (
+  projectHistoryInput: ProjectHistoryPostInput
+) => {
   const method = "POST";
   const headers = {
     Accept: "application/json",
@@ -90,39 +81,14 @@ const postProjectHistory = async (projectHistoryInput: ProjectHistoryInput) => {
   }
 };
 
-const getEngineer = async () => {
-  try {
-    // const response = await fetch("../production/project.json");
-    const response = await fetch(
-      `http://127.0.0.1:3000/engineer/${engineerId.value}`
-    );
-    console.log(response); //statusが OKか確認する。
-    if (!response.ok) {
-      throw Error("No data available");
-    }
-
-    engineerResponse.value = await response.json();
-    updateEngineerTableData();
-  } catch (err: any) {
-    error.value = err.message;
-    console.log(error.value);
-  }
-};
-
-const updateEngineerTableData = () => {
-  if (!engineerResponse.value) return;
-  projectHistoryTableData.value = engineerResponse.value!.projectHistory;
-};
-
 onMounted(() => {
-  engineerId.value = Number(route.query.engineerId);
   getEngineer();
 });
 </script>
 
 <template>
-  <EngineerDetailProjectHistoryTable
-    :engineerId="engineerId"
+  <ProjectHistoryTable
+    :engineerId="Number($route.query.engineerId)"
     :tableData="projectHistoryTableData"
     @postProjectHistory="postProjectHistory"
   />

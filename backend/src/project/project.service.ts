@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Project } from '@prisma/client';
+import { Prisma, Project, ProjectHistory } from '@prisma/client';
 import { beginningMonthDay, endMonthDay } from '../util/dateUtil';
 
 export interface ProjectResponse {
@@ -34,6 +34,18 @@ export class ProjectService {
 
   async projects(): Promise<Project[]> {
     return this.prisma.project.findMany({});
+  }
+
+  async historyUnique(historyId: number): Promise<ProjectHistory> {
+    return this.prisma.projectHistory.findUnique({
+      where: {
+        id: Number(historyId),
+      },
+      include: {
+        project: true,
+        engineer: true,
+      },
+    });
   }
 
   async history(year: number, month: number): Promise<ProjectResponse[]> {
@@ -110,5 +122,25 @@ export class ProjectService {
         company: ph.engineer.company,
       })),
     }));
+  }
+
+  async createHistory(
+    data: Prisma.ProjectHistoryUncheckedCreateInput,
+  ): Promise<ProjectHistory> {
+    return this.prisma.projectHistory.create({
+      data,
+    });
+  }
+
+  async updateHistory(
+    projectHistoryId: number,
+    data: Prisma.ProjectHistoryUncheckedUpdateInput,
+  ): Promise<ProjectHistory> {
+    return this.prisma.projectHistory.update({
+      where: {
+        id: Number(projectHistoryId),
+      },
+      data: data,
+    });
   }
 }

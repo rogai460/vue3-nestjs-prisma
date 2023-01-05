@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import EngineerTable from "@/components/EngineerTable.vue";
+import { ref, onMounted, computed } from "vue";
+import EngineerTable from "@/components/EngineerList/EngineerTable.vue";
+import { EngineerResponse } from "@/@types/ApiReqRes";
 
 export interface EngineerInput {
   lastName: string;
@@ -9,19 +10,6 @@ export interface EngineerInput {
   firstNameKana: string | null;
   sex: number | null;
   employeeId: number | null;
-  employeeCategory: number | null;
-  laborCost: number | null;
-  company: string | null;
-}
-
-export interface EngineerResponse {
-  id: string;
-  lastName: string;
-  firstName: string | null;
-  lastNameKana: string | null;
-  firstNameKana: string | null;
-  sex: number | null;
-  employeeId: string | null;
   employeeCategory: number | null;
   laborCost: number | null;
   company: string | null;
@@ -39,7 +27,7 @@ export interface EngineerTable {
 }
 
 const engineerResponse = ref<EngineerResponse[]>([]);
-const engineerTableData = ref<EngineerTable[]>([]);
+// const engineerTableData = ref<EngineerTable[]>([]);
 
 const error = ref(null);
 
@@ -73,15 +61,15 @@ const getEngineer = async () => {
     }
 
     engineerResponse.value = await response.json();
-    updateEngineerTableData();
+    // updateEngineerTableData();
   } catch (err: any) {
     error.value = err.message;
     console.log(error.value);
   }
 };
 
-const updateEngineerTableData = () => {
-  engineerTableData.value = engineerResponse.value.map((er) => ({
+const engineerTableData = computed(() => {
+  return engineerResponse.value.map((er) => ({
     id: er.id,
     fullName: `${er.lastName}　${er.firstName}`,
     fullNameKana: `${er.lastNameKana}　${er.firstNameKana}`,
@@ -91,7 +79,7 @@ const updateEngineerTableData = () => {
     laborCost: er.laborCost,
     company: er.company,
   }));
-};
+});
 
 onMounted(() => {
   getEngineer();

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import ProjectDetailTable from "@/components/ProjectDetailTable.vue";
-import { AddRecordType } from "@/components/ProjectDetailAddRecordType1.vue";
-import ProjectDetailAddRecordType1 from "@/components/ProjectDetailAddRecordType1.vue";
-import ProjectDetailSummaryCard from "@/components/ProjectDetailSummaryCard.vue";
+import ProjectDetailTable from "@/components/ProjectDetail/ProjectDetailTable.vue";
+import { AddRecordType } from "@/components/ProjectDetail/AddRecordType1.vue";
+import AddRecordType1 from "@/components/ProjectDetail/AddRecordType1.vue";
+import ProjectDetailSummaryCard from "@/components/ProjectDetail/ProjectDetailSummaryCard.vue";
 
 export interface ProjectResponse {
   projectId: string;
@@ -94,31 +94,18 @@ const updateProjectData = () => {
   refSumProfitRate.value = sumProfitRate;
 
   tableData.value = [
-    ...projectHistory,
-    {
-      id: "sum-record",
-      startDate: "",
-      endDate: "",
-      sales: sumSales,
-      cost: sumCost,
-      lastName: "合計",
-      firstName: "",
-      lastNameKana: "",
-      firstNameKana: "",
-      sex: "",
-      company: "",
-    },
+    ...projectHistory
   ];
 };
 const updateProjectData2 = () => {
   const projectHistory: ProjectHistoryResponse[] = tableData.value
-    .filter((td) => td.id !== "sum-record")
+    // .filter((td) => td.id !== "sum-record")
     .map((td) => td);
 
   const sumSales = projectHistory
     .filter((ph) => !selected.value.includes(ph.id))
     .reduce((sumSales: number, ph) => sumSales + ph.sales, 0);
-  refSumSales.value = sumSales;
+  refSumCost.value = sumSales;
 
   const sumCost: number = projectHistory
     .filter((ph) => !selected.value.includes(ph.id))
@@ -134,19 +121,6 @@ const updateProjectData2 = () => {
 
   tableData.value = [
     ...projectHistory,
-    {
-      id: "sum-record",
-      startDate: "",
-      endDate: "",
-      sales: sumSales,
-      cost: sumCost,
-      lastName: "合計",
-      firstName: "",
-      lastNameKana: "",
-      firstNameKana: "",
-      sex: "",
-      company: "",
-    },
   ];
 };
 const getProjectHistory = async () => {
@@ -249,9 +223,13 @@ onMounted(() => {
     <ProjectDetailTable
       :projectInfo="projectInfo"
       :tableData="tableData"
+      :sumSales="refSumSales"
+      :sumCost="refSumCost"
+      :sumProfit="refSumProfit"
+      :sumProfitRate="refSumProfitRate"
       @changeNotExistsIds="changeNotExistsIds"
     />
 
-    <ProjectDetailAddRecordType1 @addTable="addTable" />
+    <AddRecordType1 @addTable="addTable" />
   </div>
 </template>

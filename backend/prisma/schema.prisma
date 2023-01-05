@@ -58,7 +58,7 @@ model ProjectHistory {
   startDate               DateTime
   endDate                 DateTime?
   expectedEndDate         DateTime?
-  utilizationRate         Decimal
+  utilizationRate         Decimal?
   salesContractCompany    String?
   purchaseContractCompany String?
   contractType            Int?

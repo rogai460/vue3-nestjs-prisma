@@ -8,6 +8,10 @@ import {
 defineProps<{
   projectInfo: ProjectResponse | null;
   tableData: ProjectHistoryResponse[];
+  sumSales: number;
+  sumCost: number;
+  sumProfit: number;
+  sumProfitRate: number;
 }>();
 const dataIds = ref<string[]>([]);
 const emit = defineEmits(["changeNotExistsIds"]);
@@ -100,10 +104,20 @@ const notExists = () => {
       <tfoot>
         <tr class="font-semibold text-gray-900 dark:text-white">
           <th scope="row" class="py-3 px-6 text-base">Total</th>
-          <td class="py-3 px-6">3</td>
-          <td class="py-3 px-6">21,000</td>
+          <td class="py-3 px-6"></td>
+          <td class="py-3 px-6"></td>
+          <td class="py-3 px-6 text-right">
+            ¥ {{ sumSales.toLocaleString() }}
+          </td>
+          <td class="py-3 px-6 text-right">¥ {{ sumCost.toLocaleString() }}</td>
+          <td class="py-3 px-6 text-right">
+            ¥ {{ sumProfit.toLocaleString() }}
+          </td>
+          <td class="py-3 px-6 text-right">
+            {{ Math.round(sumProfitRate * 100 * 10) / 10 }} %
+          </td>
         </tr>
-      </tfoot>  
+      </tfoot>
     </table>
   </div>
   <!-- </div> -->
