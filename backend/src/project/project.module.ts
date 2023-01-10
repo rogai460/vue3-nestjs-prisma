@@ -4,7 +4,7 @@ import { ProjectService } from './project.service';
 import { ProjectController } from './project.controller';
 
 @Module({
-  providers: [ProjectService,PrismaService],
-  controllers: [ProjectController]
+  providers: [ProjectService, PrismaService],
+  controllers: [ProjectController],
 })
 export class ProjectModule {}
