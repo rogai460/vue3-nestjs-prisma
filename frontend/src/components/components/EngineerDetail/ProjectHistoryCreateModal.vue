@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
-import { ProjectHistoryPostInput } from "@/pages/EngineerDetail.vue";
-import ProjectHistoryResponse from "@/@types/ApiReqRes";
+import { ref, onMounted, watch } from 'vue';
+import { ProjectHistoryPostInput } from '@/pages/EngineerDetail.vue';
+import { ProjectHistoryResponse } from '@/@types/ApiReqRes';
 
 // type Props = {
 //   show: boolean;
@@ -12,7 +12,7 @@ const props = defineProps<{
   show: boolean;
   modalType: number;
   engineerId: number;
-  data: ProjectHistoryResponse;
+  data: ProjectHistoryResponse | null;
 }>();
 // const props = withDefaults(defineProps<Props>(), {
 //   show: false,
@@ -20,14 +20,15 @@ const props = defineProps<{
 //   engineerId: 0,
 // });
 
-const emit = defineEmits(["closeModal", "postProjectHistory"]);
+const emit = defineEmits(['closeModal', 'postProjectHistory']);
 const commitProjectHistory = () => {
-  emit("postProjectHistory", projectHistoryInput.value);
-  emit("closeModal");
+  emit('postProjectHistory', projectHistoryInput.value);
+  emit('closeModal');
 };
 
 const initProjectHistoryInput = {
   startDate: null,
+  endDate: null,
   expectedEndDate: null,
   utilizationRate: null,
   salesContractCompany: null,
@@ -35,11 +36,11 @@ const initProjectHistoryInput = {
   contractType: null,
   cost: null,
   sales: null,
-  projectId: 1,
+  projectId: 0,
   engineerId: Number(props.engineerId),
 };
 const projectHistoryInput = ref<ProjectHistoryPostInput>(
-  initProjectHistoryInput
+  initProjectHistoryInput,
 );
 
 const showModal = ref<boolean>(false);
@@ -47,25 +48,10 @@ watch(
   () => props.show,
   (show) => {
     showModal.value = show;
-  }
+  },
 );
 onMounted(() => {
-  if (props.modalType === 0) {
-    projectHistoryInput.value = initProjectHistoryInput;
-  } else {
-    projectHistoryInput.value = {
-      startDate: props.data.startDate,
-      expectedEndDate: props.data.expectedEndDate,
-      utilizationRate: props.data.utilizationRate,
-      salesContractCompany: props.data.salesContractCompany,
-      purchaseContractCompany: props.data.purchaseContractCompany,
-      contractType: props.data.contractType,
-      sales: props.data.sales,
-      cost: props.data.cost,
-      projectId: 1,
-      engineerId: Number(props.engineerId),
-    };
-  }
+  projectHistoryInput.value = initProjectHistoryInput;
 });
 </script>
 
@@ -132,7 +118,7 @@ onMounted(() => {
                   </svg>
                 </button>
               </div>
-              {{ modalType }}
+
               <!-- Modal body -->
               <div class="p-6 space-y-6">
                 <div class="grid grid-cols-6 gap-6">
@@ -148,9 +134,9 @@ onMounted(() => {
                     >
                       <option selected>Choose a country</option>
                       <option value="1">Y案件</option>
-                      <option value="2">Y案件</option>
-                      <option value="3">U案件</option>
-                      <option value="4">T案件</option>
+                      <option value="101">Y案件</option>
+                      <option value="102">U案件</option>
+                      <option value="103">T案件</option>
                     </select>
                     <!-- <input
                       type="text"
@@ -177,7 +163,7 @@ onMounted(() => {
                   <div class="col-span-6 sm:col-span-3">
                     <label
                       class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >終了日</label
+                      >終了予定日</label
                     >
                     <input
                       type="date"

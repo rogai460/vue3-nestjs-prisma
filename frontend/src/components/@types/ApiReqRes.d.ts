@@ -6,6 +6,29 @@ export interface ProjectResponse {
   endDate: string | null;
   endUser: string;
 }
+export interface ProjectWithHistoryResponse {
+  id: string;
+  projectNameMask: string;
+  projectName: string;
+  startDate: string;
+  endDate: string | null;
+  endUser: string;
+  projectHistory: ProjectHistoryResponse[];
+}
+export interface ProjectHistoryGroupByMonth {
+  label: string;
+  data: ProjectHistoryGroupBy[];
+}
+export interface ProjectHistoryGroupBy {
+  _sum: {
+    sales: number;
+    cost: number;
+  };
+  _avg: {
+    cost: number;
+  };
+  projectId: number;
+}
 
 export interface EngineerResponse {
   id: string;

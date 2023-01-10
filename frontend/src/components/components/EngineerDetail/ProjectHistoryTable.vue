@@ -18,7 +18,7 @@ const postProjectHistory = (projectHistoryInput: ProjectHistoryPostInput) => {
 
 const showModal = ref<boolean>(false);
 const modalType = ref<number>(0);
-const updateData = ref<ProjectHistoryResponse>();
+const updateData = ref<ProjectHistoryResponse|null>(null);
 
 const createModal = () => {
   modalType.value = 0;
@@ -48,7 +48,6 @@ const viewProfitRate = (sales: number | null, cost: number | null): string => {
 </script>
 
 <template>
-  {{ tableData }}
   <div class="grid md:grid-cols-6 md:gap-4">
     <h5
       class="col-span-5 py-4 font-bold uppercase text-gray-600 dark:text-white"
@@ -80,9 +79,8 @@ const viewProfitRate = (sales: number | null, cost: number | null): string => {
           <th scope="col" class="py-3 px-6 text-left">プロジェクト名称</th>
           <th scope="col" class="py-3 px-6 text-left">エンドユーザー</th>
           <th scope="col" class="py-3 px-6 text-right">契約開始</th>
-
-          <th scope="col" class="py-3 px-6 text-right">契約終了</th>
           <th scope="col" class="py-3 px-6 text-right">契約終了予定</th>
+          <th scope="col" class="py-3 px-6 text-right">契約終了</th>
           <th scope="col" class="py-3 px-6 text-right">売上</th>
           <th scope="col" class="py-3 px-6 text-right">コスト</th>
           <th scope="col" class="py-3 px-6 text-right">利益</th>
@@ -106,10 +104,10 @@ const viewProfitRate = (sales: number | null, cost: number | null): string => {
             {{ dt.startDate?.substring(0, 10) }}
           </td>
           <td scope="col" class="py-3 px-6">
-            {{ dt.endDate?.substring(0, 10) }}
+            {{ dt.expectedEndDate?.substring(0, 10) }}
           </td>
           <td scope="col" class="py-3 px-6">
-            {{ dt.expectedEndDate?.substring(0, 10) }}
+            {{ dt.endDate?.substring(0, 10) }}
           </td>
           <td
             scope="col"

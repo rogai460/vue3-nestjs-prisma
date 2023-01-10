@@ -63,7 +63,6 @@ const commitEngineer = () => {
           <th scope="col" class="py-3 px-6 text-center">性別</th>
           <th scope="col" class="py-3 px-6 text-center">社員区分</th>
           <th scope="col" class="py-3 px-6 text-right">労務費</th>
-
           <th scope="col" class="py-3 px-6 text-center"></th>
         </tr>
       </thead>

@@ -1,19 +1,25 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import {
-  ProjectResponse,
-  ProjectHistoryResponse,
-} from "@/pages/ProjectDetail.vue";
+import { ProjectResponse, ProjectHistoryResponse } from "@/@types/ApiReqRes";
 
 defineProps<{
   projectInfo: ProjectResponse | null;
-  tableData: ProjectHistoryResponse[];
+  tableData: any;
   sumSales: number;
   sumCost: number;
   sumProfit: number;
   sumProfitRate: number;
 }>();
 const dataIds = ref<string[]>([]);
+
+const viewProfit = (sales: number | null, cost: number | null): string => {
+  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : "";
+};
+const viewProfitRate = (sales: number | null, cost: number | null): string => {
+  return sales && cost
+    ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %`
+    : "";
+};
 const emit = defineEmits(["changeNotExistsIds"]);
 const notExists = () => {
   emit("changeNotExistsIds", dataIds.value);
@@ -41,6 +47,8 @@ const notExists = () => {
           <th scope="col" class="py-3 px-6 text-left">フルネーム</th>
           <th scope="col" class="py-3 px-6 text-left">カナ</th>
           <th scope="col" class="py-3 px-6 text-center">性別</th>
+          <th scope="col" class="py-3 px-6 text-left">契約開始</th>
+          <th scope="col" class="py-3 px-6 text-left">契約終了予定</th>
           <th scope="col" class="py-3 px-6 text-right">売上</th>
           <th scope="col" class="py-3 px-6 text-right">コスト</th>
           <th scope="col" class="py-3 px-6 text-right">利益</th>
@@ -61,6 +69,12 @@ const notExists = () => {
             {{ dt.lastNameKana }} {{ dt.firstNameKana }}
           </td>
           <td scope="col" class="py-3 px-6 text-center">{{ dt.sex }}</td>
+          <td scope="col" class="py-3 px-6">
+            {{ dt.startDate?.substring(0, 10) }}
+          </td>
+          <td scope="col" class="py-3 px-6">
+            {{ dt.expectedEndDate?.substring(0, 10) }}
+          </td>
           <td
             scope="col"
             class="py-3 px-6 text-right font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -77,13 +91,12 @@ const notExists = () => {
             scope="col"
             class="py-4 px-6 text-right font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            ¥ {{ (dt.sales - dt.cost).toLocaleString() }}
+            {{ viewProfit(dt.sales, dt.cost) }}
           </td>
           <td
             class="py-4 px-6 text-right font-medium text-gray-900 whitespace-nowrap dark:text-white"
           >
-            {{ Math.round(((dt.sales - dt.cost) / dt.sales) * 100 * 10) / 10 }}
-            %
+            {{ viewProfitRate(dt.sales, dt.cost) }}
           </td>
           <td class="text-center">
             <label class="inline-flex relative items-center cursor-pointer">
@@ -106,6 +119,8 @@ const notExists = () => {
           <th scope="row" class="py-3 px-6 text-base">Total</th>
           <td class="py-3 px-6"></td>
           <td class="py-3 px-6"></td>
+          <td class="py-3 px-6"></td>
+          <td class="py-3 px-6"></td>
           <td class="py-3 px-6 text-right">
             ¥ {{ sumSales.toLocaleString() }}
           </td>
@@ -114,7 +129,7 @@ const notExists = () => {
             ¥ {{ sumProfit.toLocaleString() }}
           </td>
           <td class="py-3 px-6 text-right">
-            {{ Math.round(sumProfitRate * 100 * 10) / 10 }} %
+            {{ viewProfitRate(sumSales, sumCost) }}
           </td>
         </tr>
       </tfoot>

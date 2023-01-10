@@ -17,7 +17,7 @@ import { EngineerModule } from './engineer/engineer.module';
     ProjectModule,
     EngineerModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
+      rootPath: join(__dirname, '../../', 'public'),
     }),
   ],
 })

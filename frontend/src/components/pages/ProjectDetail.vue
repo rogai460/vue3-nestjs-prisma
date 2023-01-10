@@ -1,37 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import ProjectDetailTable from "@/components/ProjectDetail/ProjectDetailTable.vue";
-import { AddRecordType } from "@/components/ProjectDetail/AddRecordType1.vue";
-import AddRecordType1 from "@/components/ProjectDetail/AddRecordType1.vue";
-import ProjectDetailSummaryCard from "@/components/ProjectDetail/ProjectDetailSummaryCard.vue";
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import ProjectDetailTable from '@/components/ProjectDetail/ProjectDetailTable.vue';
+import { AddRecordType } from '@/components/ProjectDetail/AddRecordType1.vue';
+import AddRecordType1 from '@/components/ProjectDetail/AddRecordType1.vue';
+import ProjectDetailSummaryCard from '@/components/ProjectDetail/ProjectDetailSummaryCard.vue';
+import {
+  ProjectResponse,
+  ProjectWithHistoryResponse,
+} from '@/@types/ApiReqRes';
 
-export interface ProjectResponse {
-  projectId: string;
-  projectNameMask: string;
-  projectName: string;
-  // startDate: Date;
-  // endDate: Date | null;
-  // endUser: string;
-  projectHistory: ProjectHistoryResponse[];
-}
-
-export interface Project {
-  id: string;
-  projectNameMask: string;
-  projectName: string;
-  // startDate: Date;
-  // endDate: Date | null;
-  // endUser: string;
-}
-
-export interface ProjectHistoryResponse {
-  id: string;
+export interface TableData {
+  id: number;
   startDate: string;
   endDate: string | null;
-  // engineerId: number;
+  expectedEndDate: string | null;
   sales: number;
-  cost: number;
-  lastName: string;
+  cost: number | null;
+  lastName: string | null;
   firstName: string | null;
   lastNameKana: string | null;
   firstNameKana: string | null;
@@ -39,26 +25,67 @@ export interface ProjectHistoryResponse {
   company: string | null;
 }
 
-const projectInfo = ref<ProjectResponse | null>(null);
-const projectResponse = ref<ProjectResponse[]>([]);
-const tableData = ref<ProjectHistoryResponse[]>([]);
-const refSumSales = ref<number>(0);
-const refSumCost = ref<number>(0);
-const refAveCost = ref<number>(0);
-const refSumProfit = ref<number>(0);
-const refSumProfitRate = ref<number>(0);
-const projectId = ref<string>();
-const projectList = ref<Project[]>([]);
+const route = useRoute();
+const projectResponse = ref<ProjectWithHistoryResponse[]>([]);
+
+const projectId = ref<string>(
+  route.query.projectId ? String(route.query.projectId) : '',
+);
+const projectList = ref<ProjectResponse[]>([]);
 const error = ref(null);
-const selected = ref<string[]>([]);
+const selected = ref<number[]>([]);
+
+const addTableData = ref<TableData | null>(null);
+const tableData = computed((): TableData[] => {
+  const p = projectResponse.value.find((p) => String(p.id) == projectId.value);
+  const t = !p
+    ? []
+    : p.projectHistory.map((ph) => ({
+        id: Number(ph.id),
+        startDate: ph.startDate,
+        endDate: ph.endDate,
+        expectedEndDate: ph.expectedEndDate,
+        sales: ph.sales,
+        cost: ph.cost,
+        lastName: ph.engineer.lastName,
+        firstName: ph.engineer.firstName,
+        lastNameKana: ph.engineer.lastNameKana,
+        firstNameKana: ph.engineer.firstNameKana,
+        sex: ph.engineer.sex,
+        company: ph.engineer.company,
+      }));
+  return addTableData.value ? [...t, addTableData.value] : t;
+});
+
+const projectInfo = computed(
+  () =>
+    projectList.value.find((pl) => Number(pl.id) === Number(projectId.value)) ??
+    null,
+);
+
+const sumSales = computed(() =>
+  tableData.value
+    .filter((ph) => !selected.value.includes(ph.id))
+    .reduce((sumSales: number, ph) => sumSales + ph.sales, 0),
+);
+const sumCost = computed(() =>
+  tableData.value
+    .filter((ph) => !selected.value.includes(ph.id))
+    .reduce((sumCost: number, ph) => sumCost + (ph.cost ? ph.cost : 0), 0),
+);
+const aveCost = computed(
+  () => Math.round((sumSales.value / tableData.value.length) * 10) / 10,
+);
+const sumProfit = computed(() => sumSales.value - sumCost.value);
+const sumProfitRate = computed(() => sumProfit.value / sumSales.value);
 
 const getProject = async () => {
   try {
     // const response = await fetch("../production/project.json");
-    const response = await fetch("http://127.0.0.1:3000/project");
+    const response = await fetch('http://127.0.0.1:3000/project');
     console.log(response); //statusが OKか確認する。
     if (!response.ok) {
-      throw Error("No data available");
+      throw Error('No data available');
     }
     projectList.value = await response.json();
   } catch (err: any) {
@@ -66,74 +93,17 @@ const getProject = async () => {
     console.log(error.value);
   }
 };
-const updateProjectData = () => {
-  const project = projectResponse.value.find(
-    (p) => String(p.projectId) === String(projectId.value)
-  );
-  if (!project) {
-    return;
-  }
-  const projectHistory: ProjectHistoryResponse[] = project.projectHistory;
-  projectInfo.value = project;
 
-  const sumSales = projectHistory
-    .filter((ph) => !selected.value.includes(ph.id))
-    .reduce((sumSales: number, ph) => sumSales + ph.sales, 0);
-  refSumSales.value = sumSales;
-
-  const sumCost: number = projectHistory
-    .filter((ph) => !selected.value.includes(ph.id))
-    .reduce((sumCost: number, ph) => sumCost + ph.cost, 0);
-  refSumCost.value = sumCost;
-  refAveCost.value = Math.round((sumSales / projectHistory.length) * 10) / 10;
-
-  const sumProfit = sumSales - sumCost;
-  refSumProfit.value = sumProfit;
-
-  const sumProfitRate = sumProfit / sumSales;
-  refSumProfitRate.value = sumProfitRate;
-
-  tableData.value = [
-    ...projectHistory
-  ];
-};
-const updateProjectData2 = () => {
-  const projectHistory: ProjectHistoryResponse[] = tableData.value
-    // .filter((td) => td.id !== "sum-record")
-    .map((td) => td);
-
-  const sumSales = projectHistory
-    .filter((ph) => !selected.value.includes(ph.id))
-    .reduce((sumSales: number, ph) => sumSales + ph.sales, 0);
-  refSumCost.value = sumSales;
-
-  const sumCost: number = projectHistory
-    .filter((ph) => !selected.value.includes(ph.id))
-    .reduce((sumCost: number, ph) => sumCost + ph.cost, 0);
-  refSumCost.value = sumCost;
-  refAveCost.value = Math.round((sumSales / projectHistory.length) * 10) / 10;
-
-  const sumProfit = sumSales - sumCost;
-  refSumProfit.value = sumProfit;
-
-  const sumProfitRate = sumProfit / sumSales;
-  refSumProfitRate.value = sumProfitRate;
-
-  tableData.value = [
-    ...projectHistory,
-  ];
-};
 const getProjectHistory = async () => {
   try {
     // const response = await fetch("../production/project/history.json");
-    const response = await fetch("http://127.0.0.1:3000/project/history");
+    const response = await fetch('http://127.0.0.1:3000/project/history');
     console.log(response); //statusが OKか確認する。
     if (!response.ok) {
       //okというプロパティがありtrue/falseで返す
-      throw Error("No data available");
+      throw Error('No data available');
     }
     projectResponse.value = await response.json();
-    updateProjectData();
   } catch (err: any) {
     error.value = err.message;
     console.log(error.value);
@@ -143,35 +113,32 @@ const getProjectHistory = async () => {
 const projectChange = (e: any) => {
   projectId.value = e.target.value;
   selected.value = [];
-  updateProjectData();
+  addTableData.value = null;
 };
-const changeNotExistsIds = (notExistsIds: string[]) => {
+
+const changeNotExistsIds = (notExistsIds: number[]) => {
   selected.value = notExistsIds;
-  updateProjectData2();
 };
 
 const addTable = (addRecord: AddRecordType) => {
-  if (addRecord.lastName === "") {
+  if (addRecord.lastName === '') {
     return;
   }
-  tableData.value = [
-    ...tableData.value,
-    {
-      id: addRecord.id,
-      startDate: "",
-      endDate: "",
-      sales: addRecord.sales,
-      cost: addRecord.cost,
-      lastName: addRecord.lastName,
-      firstName: "",
-      lastNameKana: "",
-      firstNameKana: "",
-      sex: "",
-      company: "",
-    },
-  ];
 
-  updateProjectData2();
+  addTableData.value = {
+    id: Number(addRecord.id),
+    startDate: '',
+    endDate: '',
+    expectedEndDate: '',
+    sales: addRecord.sales,
+    cost: addRecord.cost,
+    lastName: addRecord.lastName,
+    firstName: '',
+    lastNameKana: '',
+    firstNameKana: '',
+    sex: '',
+    company: '',
+  };
 };
 
 onMounted(() => {
@@ -181,6 +148,7 @@ onMounted(() => {
 </script>
 
 <template>
+  {{ projectId }}
   <div class="w-full md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
     <div class="flex justify-left">
       <div class="mb-3 xl:w-96">
@@ -212,9 +180,9 @@ onMounted(() => {
     </h1>
 
     <ProjectDetailSummaryCard
-      :sumSales="refSumSales"
-      :sumProfitRate="refSumProfitRate"
-      :aveCost="refAveCost"
+      :sumSales="sumSales"
+      :sumProfitRate="sumProfitRate"
+      :aveCost="aveCost"
     />
 
     <!--Divider-->
@@ -223,10 +191,10 @@ onMounted(() => {
     <ProjectDetailTable
       :projectInfo="projectInfo"
       :tableData="tableData"
-      :sumSales="refSumSales"
-      :sumCost="refSumCost"
-      :sumProfit="refSumProfit"
-      :sumProfitRate="refSumProfitRate"
+      :sumSales="sumSales"
+      :sumCost="sumCost"
+      :sumProfit="sumProfit"
+      :sumProfitRate="sumProfitRate"
       @changeNotExistsIds="changeNotExistsIds"
     />
 

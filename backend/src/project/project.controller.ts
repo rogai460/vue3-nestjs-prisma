@@ -1,6 +1,10 @@
 import { Controller, Get, Query, Param, Post, Body } from '@nestjs/common';
-import { ProjectService, ProjectResponse } from './project.service';
-import { Project, ProjectHistory } from '@prisma/client';
+import {
+  ProjectService,
+  ProjectHistoryGroupBy,
+  ProjectHistoryGroupByMonth,
+} from './project.service';
+import { Project, ProjectHistory, Prisma } from '@prisma/client';
 import { convertDate } from '../util/dateUtil';
 interface ProjectHistoryPostInput {
   startDate: string;
@@ -27,12 +31,61 @@ export class ProjectController {
   @Get('history')
   async history(): // @Query('year') year: number,
   // @Query('month') month: number,
-  Promise<ProjectResponse[]> {
+  Promise<Project[]> {
     const date = new Date();
     return this.projectService.history(
       Number(date.getFullYear()),
       Number(date.getMonth() + 1),
     );
+  }
+
+  @Get('history/group')
+  async historyGroup(): // @Query('year') year: number,
+  // @Query('month') month: number,
+  Promise<ProjectHistoryGroupBy[]> {
+    const date = new Date();
+    return this.projectService.historyGroup(
+      Number(date.getFullYear()),
+      Number(date.getMonth() + 1),
+    );
+  }
+
+  @Get('history/group/month')
+  async historyGroupMonth(): // @Query('year') year: number,
+  // @Query('month') month: number,
+  Promise<ProjectHistoryGroupByMonth[]> {
+    const date = new Date();
+    const argList = [
+      { year: 2022, month: 9 },
+      { year: 2022, month: 10 },
+      { year: 2022, month: 11 },
+      { year: 2022, month: 12 },
+      { year: 2023, month: 1 },
+      { year: 2023, month: 2 },
+      { year: 2023, month: 3 },
+      { year: 2023, month: 4 },
+      { year: 2023, month: 5 },
+      { year: 2023, month: 6 },
+      { year: 2023, month: 7 },
+      { year: 2023, month: 8 },
+    ];
+
+    let res = [];
+    for (const arg of argList) {
+      const historyGroup = this.projectService.historyGroup(
+        arg.year,
+        arg.month,
+      );
+      res = [
+        ...res,
+        {
+          label: `${arg.year}/${String(arg.month).padStart(2, '0')}`,
+          data: await historyGroup,
+        },
+      ];
+    }
+
+    return res;
   }
 
   @Get('history/:historyId')
@@ -48,7 +101,7 @@ export class ProjectController {
   ): Promise<ProjectHistory> {
     return this.projectService.createHistory({
       startDate: convertDate(postData.startDate),
-      endDate: convertDate(postData.expectedEndDate),
+      expectedEndDate: convertDate(postData.expectedEndDate),
       utilizationRate: postData.utilizationRate,
       sales: Number(postData.sales),
       cost: Number(postData.cost),
