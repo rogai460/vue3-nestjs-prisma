@@ -11,7 +11,7 @@ import {
 } from '@/@types/ApiReqRes';
 
 export interface TableData {
-  id: number;
+  id: string;
   startDate: string;
   endDate: string | null;
   expectedEndDate: string | null;
@@ -33,15 +33,15 @@ const projectId = ref<string>(
 );
 const projectList = ref<ProjectResponse[]>([]);
 const error = ref(null);
-const selected = ref<number[]>([]);
+const selected = ref<string[]>([]);
 
-const addTableData = ref<TableData | null>(null);
+const addTableData = ref<TableData[]>([]);
 const tableData = computed((): TableData[] => {
   const p = projectResponse.value.find((p) => String(p.id) == projectId.value);
   const t = !p
     ? []
     : p.projectHistory.map((ph) => ({
-        id: Number(ph.id),
+        id: String(ph.id),
         startDate: ph.startDate,
         endDate: ph.endDate,
         expectedEndDate: ph.expectedEndDate,
@@ -54,7 +54,7 @@ const tableData = computed((): TableData[] => {
         sex: ph.engineer.sex,
         company: ph.engineer.company,
       }));
-  return addTableData.value ? [...t, addTableData.value] : t;
+  return addTableData.value ? [...t, ...addTableData.value] : t;
 });
 
 const projectInfo = computed(
@@ -113,10 +113,10 @@ const getProjectHistory = async () => {
 const projectChange = (e: any) => {
   projectId.value = e.target.value;
   selected.value = [];
-  addTableData.value = null;
+  addTableData.value = [];
 };
 
-const changeNotExistsIds = (notExistsIds: number[]) => {
+const changeNotExistsIds = (notExistsIds: string[]) => {
   selected.value = notExistsIds;
 };
 
@@ -124,21 +124,23 @@ const addTable = (addRecord: AddRecordType) => {
   if (addRecord.lastName === '') {
     return;
   }
-
-  addTableData.value = {
-    id: Number(addRecord.id),
-    startDate: '',
-    endDate: '',
-    expectedEndDate: '',
-    sales: addRecord.sales,
-    cost: addRecord.cost,
-    lastName: addRecord.lastName,
-    firstName: '',
-    lastNameKana: '',
-    firstNameKana: '',
-    sex: '',
-    company: '',
-  };
+  addTableData.value = [
+    ...addTableData.value,
+    {
+      id: addRecord.id,
+      startDate: '',
+      endDate: '',
+      expectedEndDate: '',
+      sales: addRecord.sales,
+      cost: addRecord.cost,
+      lastName: addRecord.lastName,
+      firstName: '',
+      lastNameKana: '',
+      firstNameKana: '',
+      sex: '',
+      company: '',
+    },
+  ];
 };
 
 onMounted(() => {
@@ -148,7 +150,7 @@ onMounted(() => {
 </script>
 
 <template>
-  {{ projectId }}
+  {{ addTableData }}
   <div class="w-full md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
     <div class="flex justify-left">
       <div class="mb-3 xl:w-96">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { getRandomString } from "@/functions/CryptoUtil";
+import { ref } from 'vue';
+import { getRandomString } from '@/functions/CryptoUtil';
 
 export interface AddRecordType {
   id: string;
@@ -12,24 +12,25 @@ export interface AddRecordType {
 // defineProps<{}>();
 
 const addRecord = ref<AddRecordType>({
-  id: "",
-  lastName: "",
+  id: '',
+  lastName: '',
   sales: 0,
   cost: 0,
 });
 
-const emit = defineEmits(["addTable"]);
+const emit = defineEmits(['addTable']);
 const addTable = () => {
   const sales: number = addRecord.value.sales ? addRecord.value.sales : 0;
   const cost: number = addRecord.value.cost ? addRecord.value.cost : 0;
 
+  console.log(getRandomString());
   addRecord.value.id = getRandomString();
   addRecord.value.sales = sales * 10000;
   addRecord.value.cost = cost * 10000;
-  emit("addTable", addRecord.value);
+  emit('addTable', addRecord.value);
   addRecord.value = {
-    id: "",
-    lastName: "",
+    id: '',
+    lastName: '',
     sales: 0,
     cost: 0,
   };
@@ -107,9 +108,9 @@ const addTable = () => {
                 ? Math.round(
                     ((addRecord.sales - addRecord.cost) / addRecord.sales) *
                       100 *
-                      10
+                      10,
                   ) / 10
-                : "-"
+                : '-'
             }}
             %
           </div>
