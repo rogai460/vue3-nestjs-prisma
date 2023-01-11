@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SummaryCard from "@/basics/SummaryCard.vue";
+import SummaryCard from '@/basics/SummaryCard.vue';
 
 const props = defineProps<{
   sumSales: number;
@@ -8,13 +8,10 @@ const props = defineProps<{
 }>();
 
 const sumSalesCard = (): string =>
-  `¥ ${Math.round(
-    Math.floor(props.sumSales / 1000000) === 0
-      ? props.sumSales / 1000
-      : props.sumSales / 1000000
-  ).toLocaleString()} ${
-    Math.floor(props.sumSales / 1000000) === 0 ? "K+" : "M+"
-  }`;
+  `¥ ${(Math.floor(props.sumSales / 1000000) === 0
+    ? props.sumSales / 1000
+    : props.sumSales / 1000000
+  ).toFixed(1)} ${Math.floor(props.sumSales / 1000000) === 0 ? 'K+' : 'M+'}`;
 
 const sumProfitRateCard = (): string =>
   `${Math.round(props.sumProfitRate * 100 * 10) / 10} %`;
