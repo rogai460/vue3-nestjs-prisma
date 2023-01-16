@@ -1,0 +1,10 @@
+env:
+  'vue/setup-compiler-macros': true
+
+parserOptions:
+  parser: '@typescript-eslint/parser'
+
+extends:
+  - 'eslint:recommended'
+  - 'plugin:vue/vue3-recommended'
+  - 'prettier'

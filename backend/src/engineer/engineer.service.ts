@@ -30,4 +30,18 @@ export class EngineerService {
       data,
     });
   }
+
+  async updateEngineer(
+    engineerId: number,
+    data: Prisma.EngineerUncheckedUpdateInput,
+  ): Promise<Engineer> {
+    console.log(engineerId);
+    console.log(data);
+    return this.prisma.engineer.update({
+      where: {
+        id: Number(engineerId),
+      },
+      data: data,
+    });
+  }
 }

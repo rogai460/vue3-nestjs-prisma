@@ -5,10 +5,7 @@ import ProjectDetailTable from '@/components/ProjectDetail/ProjectDetailTable.vu
 import { AddRecordType } from '@/components/ProjectDetail/AddRecordType1.vue';
 import AddRecordType1 from '@/components/ProjectDetail/AddRecordType1.vue';
 import ProjectDetailSummaryCard from '@/components/ProjectDetail/ProjectDetailSummaryCard.vue';
-import {
-  ProjectResponse,
-  ProjectWithHistoryResponse,
-} from '@/@types/ApiReqRes';
+import { getProject, ProjectResponse, getProjectWithHistory, ProjectWithHistoryResponse } from '@/functions/Repository';
 
 export interface TableData {
   id: string;
@@ -21,18 +18,15 @@ export interface TableData {
   firstName: string | null;
   lastNameKana: string | null;
   firstNameKana: string | null;
-  sex: string | null;
+  sex: number | null;
   company: string | null;
 }
 
 const route = useRoute();
 const projectResponse = ref<ProjectWithHistoryResponse[]>([]);
 
-const projectId = ref<string>(
-  route.query.projectId ? String(route.query.projectId) : '',
-);
+const projectId = ref<string>(route.query.projectId ? String(route.query.projectId) : '');
 const projectList = ref<ProjectResponse[]>([]);
-const error = ref(null);
 const selected = ref<string[]>([]);
 
 const addTableData = ref<TableData[]>([]);
@@ -47,21 +41,17 @@ const tableData = computed((): TableData[] => {
         expectedEndDate: ph.expectedEndDate,
         sales: ph.sales,
         cost: ph.cost,
-        lastName: ph.engineer.lastName,
-        firstName: ph.engineer.firstName,
-        lastNameKana: ph.engineer.lastNameKana,
-        firstNameKana: ph.engineer.firstNameKana,
-        sex: ph.engineer.sex,
-        company: ph.engineer.company,
+        lastName: ph.engineer ? ph.engineer.lastName : '',
+        firstName: ph.engineer ? ph.engineer.firstName : null,
+        lastNameKana: ph.engineer ? ph.engineer.lastNameKana : null,
+        firstNameKana: ph.engineer ? ph.engineer.firstNameKana : null,
+        sex: ph.engineer ? ph.engineer.sex : null,
+        company: ph.engineer ? ph.engineer.company : null,
       }));
   return addTableData.value ? [...t, ...addTableData.value] : t;
 });
 
-const projectInfo = computed(
-  () =>
-    projectList.value.find((pl) => Number(pl.id) === Number(projectId.value)) ??
-    null,
-);
+const projectInfo = computed(() => projectList.value.find((pl) => Number(pl.id) === Number(projectId.value)) ?? null);
 
 const sumSales = computed(() =>
   tableData.value
@@ -73,41 +63,16 @@ const sumCost = computed(() =>
     .filter((ph) => !selected.value.includes(ph.id))
     .reduce((sumCost: number, ph) => sumCost + (ph.cost ? ph.cost : 0), 0),
 );
-const aveCost = computed(
-  () => Math.round((sumSales.value / tableData.value.length) * 10) / 10,
-);
+const aveCost = computed(() => Math.round((sumSales.value / tableData.value.length) * 10) / 10);
 const sumProfit = computed(() => sumSales.value - sumCost.value);
 const sumProfitRate = computed(() => sumProfit.value / sumSales.value);
 
-const getProject = async () => {
-  try {
-    // const response = await fetch("../production/project.json");
-    const response = await fetch('http://127.0.0.1:3000/project');
-    console.log(response); //statusが OKか確認する。
-    if (!response.ok) {
-      throw Error('No data available');
-    }
-    projectList.value = await response.json();
-  } catch (err: any) {
-    error.value = err.message;
-    console.log(error.value);
-  }
+const setProjectList = async () => {
+  projectList.value = await getProject();
 };
 
-const getProjectHistory = async () => {
-  try {
-    // const response = await fetch("../production/project/history.json");
-    const response = await fetch('http://127.0.0.1:3000/project/history');
-    console.log(response); //statusが OKか確認する。
-    if (!response.ok) {
-      //okというプロパティがありtrue/falseで返す
-      throw Error('No data available');
-    }
-    projectResponse.value = await response.json();
-  } catch (err: any) {
-    error.value = err.message;
-    console.log(error.value);
-  }
+const setProjectResponse = async () => {
+  projectResponse.value = await getProjectWithHistory();
 };
 
 const projectChange = (e: any) => {
@@ -137,66 +102,51 @@ const addTable = (addRecord: AddRecordType) => {
       firstName: '',
       lastNameKana: '',
       firstNameKana: '',
-      sex: '',
+      sex: null,
       company: '',
     },
   ];
 };
 
 onMounted(() => {
-  getProject();
-  getProjectHistory();
+  setProjectList();
+  setProjectResponse();
 });
 </script>
 
 <template>
-  {{ addTableData }}
   <div class="w-full md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
     <div class="flex justify-left">
       <div class="mb-3 xl:w-96">
-        <label
-          for="countries"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >案件選択</label
-        >
+        <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">案件選択</label>
         <select
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="projectId"
-          v-on:change="projectChange"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          @change="projectChange"
         >
-          <option
-            v-for="option in projectList"
-            :key="option.id"
-            :value="option.id"
-          >
+          <option v-for="option in projectList" :key="option.id" :value="option.id">
             {{ option.projectNameMask }}
           </option>
         </select>
       </div>
     </div>
 
-    <h1
-      class="px-4 py-3 text-3xl font-bold underline text-gray-600 dark:text-white"
-    >
+    <h1 class="px-4 py-3 text-3xl font-bold underline text-gray-600 dark:text-white">
       {{ projectInfo?.projectName }}
     </h1>
 
-    <ProjectDetailSummaryCard
-      :sumSales="sumSales"
-      :sumProfitRate="sumProfitRate"
-      :aveCost="aveCost"
-    />
+    <ProjectDetailSummaryCard :sum-sales="sumSales" :sum-profit-rate="sumProfitRate" :ave-cost="aveCost" />
 
     <!--Divider-->
     <hr class="border-b-2 border-gray-400 my-8 mx-4" />
 
     <ProjectDetailTable
-      :projectInfo="projectInfo"
-      :tableData="tableData"
-      :sumSales="sumSales"
-      :sumCost="sumCost"
-      :sumProfit="sumProfit"
-      :sumProfitRate="sumProfitRate"
+      :project-info="projectInfo"
+      :table-data="tableData"
+      :sum-sales="sumSales"
+      :sum-cost="sumCost"
+      :sum-profit="sumProfit"
+      :sum-profit-rate="sumProfitRate"
       @changeNotExistsIds="changeNotExistsIds"
     />
 
