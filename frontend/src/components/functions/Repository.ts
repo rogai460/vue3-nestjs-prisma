@@ -69,7 +69,7 @@ export interface EngineerInput {
 export const createEngineer = async (engineerInput: EngineerInput) => {
   const url = `${baseUrl}/engineer/create`;
   try {
-    const response = await axios.post(url, engineerInput);
+    await axios.post(url, engineerInput);
     return;
   } catch (err) {
     const error = err as Error | AxiosError;
@@ -82,7 +82,7 @@ export const createEngineer = async (engineerInput: EngineerInput) => {
 export const updateEngineer = async (engineerId: number, engineerInput: EngineerInput) => {
   const url = `${baseUrl}/engineer/update/${engineerId}`;
   try {
-    const response = await axios.post(url, engineerInput);
+    await axios.post(url, engineerInput);
     return;
   } catch (err) {
     const error = err as Error | AxiosError;
@@ -234,7 +234,7 @@ export interface ProjectHistoryPostInput {
 export const createProjectHistory = async (projectHistoryInput: ProjectHistoryPostInput) => {
   const url = `${baseUrl}/project/history/create`;
   try {
-    const response = await axios.post(url, projectHistoryInput);
+    await axios.post(url, projectHistoryInput);
     return;
   } catch (err) {
     const error = err as Error | AxiosError;
@@ -262,7 +262,7 @@ export interface ProjectHistoryForm {
 export const updateProjectHistory = async (projectHistoryId: string, projectHistoryForm: ProjectHistoryForm) => {
   const url = `${baseUrl}/project/history/update/${projectHistoryId}`;
   try {
-    const response = await axios.post(url, projectHistoryForm);
+    await axios.post(url, projectHistoryForm);
     return;
   } catch (err) {
     const error = err as Error | AxiosError;

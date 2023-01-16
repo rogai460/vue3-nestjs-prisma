@@ -1,122 +1,117 @@
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import ProjectDetailTable from '@/components/ProjectDetail/ProjectDetailTable.vue';
-  import { AddRecordType } from '@/components/ProjectDetail/AddRecordType1.vue';
-  import AddRecordType1 from '@/components/ProjectDetail/AddRecordType1.vue';
-  import ProjectDetailSummaryCard from '@/components/ProjectDetail/ProjectDetailSummaryCard.vue';
-  import {
-    getProject,
-    ProjectResponse,
-    getProjectWithHistory,
-    ProjectWithHistoryResponse,
-  } from '@/functions/Repository';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import ProjectDetailTable from '@/components/ProjectDetail/ProjectDetailTable.vue';
+import { AddRecordType } from '@/components/ProjectDetail/AddRecordType1.vue';
+import AddRecordType1 from '@/components/ProjectDetail/AddRecordType1.vue';
+import ProjectDetailSummaryCard from '@/components/ProjectDetail/ProjectDetailSummaryCard.vue';
+import { getProject, ProjectResponse, getProjectWithHistory, ProjectWithHistoryResponse } from '@/functions/Repository';
 
-  export interface TableData {
-    id: string;
-    startDate: string;
-    endDate: string | null;
-    expectedEndDate: string | null;
-    sales: number;
-    cost: number | null;
-    lastName: string | null;
-    firstName: string | null;
-    lastNameKana: string | null;
-    firstNameKana: string | null;
-    sex: number | null;
-    company: string | null;
+export interface TableData {
+  id: string;
+  startDate: string;
+  endDate: string | null;
+  expectedEndDate: string | null;
+  sales: number;
+  cost: number | null;
+  lastName: string | null;
+  firstName: string | null;
+  lastNameKana: string | null;
+  firstNameKana: string | null;
+  sex: number | null;
+  company: string | null;
+}
+
+const route = useRoute();
+const projectResponse = ref<ProjectWithHistoryResponse[]>([]);
+
+const projectId = ref<string>(route.query.projectId ? String(route.query.projectId) : '');
+const projectList = ref<ProjectResponse[]>([]);
+const selected = ref<string[]>([]);
+
+const addTableData = ref<TableData[]>([]);
+const tableData = computed((): TableData[] => {
+  const p = projectResponse.value.find((p) => String(p.id) == projectId.value);
+  const t = !p
+    ? []
+    : p.projectHistory.map((ph) => ({
+        id: String(ph.id),
+        startDate: ph.startDate,
+        endDate: ph.endDate,
+        expectedEndDate: ph.expectedEndDate,
+        sales: ph.sales,
+        cost: ph.cost,
+        lastName: ph.engineer ? ph.engineer.lastName : '',
+        firstName: ph.engineer ? ph.engineer.firstName : null,
+        lastNameKana: ph.engineer ? ph.engineer.lastNameKana : null,
+        firstNameKana: ph.engineer ? ph.engineer.firstNameKana : null,
+        sex: ph.engineer ? ph.engineer.sex : null,
+        company: ph.engineer ? ph.engineer.company : null,
+      }));
+  return addTableData.value ? [...t, ...addTableData.value] : t;
+});
+
+const projectInfo = computed(() => projectList.value.find((pl) => Number(pl.id) === Number(projectId.value)) ?? null);
+
+const sumSales = computed(() =>
+  tableData.value
+    .filter((ph) => !selected.value.includes(ph.id))
+    .reduce((sumSales: number, ph) => sumSales + ph.sales, 0),
+);
+const sumCost = computed(() =>
+  tableData.value
+    .filter((ph) => !selected.value.includes(ph.id))
+    .reduce((sumCost: number, ph) => sumCost + (ph.cost ? ph.cost : 0), 0),
+);
+const aveCost = computed(() => Math.round((sumSales.value / tableData.value.length) * 10) / 10);
+const sumProfit = computed(() => sumSales.value - sumCost.value);
+const sumProfitRate = computed(() => sumProfit.value / sumSales.value);
+
+const setProjectList = async () => {
+  projectList.value = await getProject();
+};
+
+const setProjectResponse = async () => {
+  projectResponse.value = await getProjectWithHistory();
+};
+
+const projectChange = (e: any) => {
+  projectId.value = e.target.value;
+  selected.value = [];
+  addTableData.value = [];
+};
+
+const changeNotExistsIds = (notExistsIds: string[]) => {
+  selected.value = notExistsIds;
+};
+
+const addTable = (addRecord: AddRecordType) => {
+  if (addRecord.lastName === '') {
+    return;
   }
+  addTableData.value = [
+    ...addTableData.value,
+    {
+      id: addRecord.id,
+      startDate: '',
+      endDate: '',
+      expectedEndDate: '',
+      sales: addRecord.sales,
+      cost: addRecord.cost,
+      lastName: addRecord.lastName,
+      firstName: '',
+      lastNameKana: '',
+      firstNameKana: '',
+      sex: null,
+      company: '',
+    },
+  ];
+};
 
-  const route = useRoute();
-  const projectResponse = ref<ProjectWithHistoryResponse[]>([]);
-
-  const projectId = ref<string>(route.query.projectId ? String(route.query.projectId) : '');
-  const projectList = ref<ProjectResponse[]>([]);
-  const selected = ref<string[]>([]);
-
-  const addTableData = ref<TableData[]>([]);
-  const tableData = computed((): TableData[] => {
-    const p = projectResponse.value.find((p) => String(p.id) == projectId.value);
-    const t = !p
-      ? []
-      : p.projectHistory.map((ph) => ({
-          id: String(ph.id),
-          startDate: ph.startDate,
-          endDate: ph.endDate,
-          expectedEndDate: ph.expectedEndDate,
-          sales: ph.sales,
-          cost: ph.cost,
-          lastName: ph.engineer ? ph.engineer.lastName : '',
-          firstName: ph.engineer ? ph.engineer.firstName : null,
-          lastNameKana: ph.engineer ? ph.engineer.lastNameKana : null,
-          firstNameKana: ph.engineer ? ph.engineer.firstNameKana : null,
-          sex: ph.engineer ? ph.engineer.sex : null,
-          company: ph.engineer ? ph.engineer.company : null,
-        }));
-    return addTableData.value ? [...t, ...addTableData.value] : t;
-  });
-
-  const projectInfo = computed(() => projectList.value.find((pl) => Number(pl.id) === Number(projectId.value)) ?? null);
-
-  const sumSales = computed(() =>
-    tableData.value
-      .filter((ph) => !selected.value.includes(ph.id))
-      .reduce((sumSales: number, ph) => sumSales + ph.sales, 0),
-  );
-  const sumCost = computed(() =>
-    tableData.value
-      .filter((ph) => !selected.value.includes(ph.id))
-      .reduce((sumCost: number, ph) => sumCost + (ph.cost ? ph.cost : 0), 0),
-  );
-  const aveCost = computed(() => Math.round((sumSales.value / tableData.value.length) * 10) / 10);
-  const sumProfit = computed(() => sumSales.value - sumCost.value);
-  const sumProfitRate = computed(() => sumProfit.value / sumSales.value);
-
-  const setProjectList = async () => {
-    projectList.value = await getProject();
-  };
-
-  const setProjectResponse = async () => {
-    projectResponse.value = await getProjectWithHistory();
-  };
-
-  const projectChange = (e: any) => {
-    projectId.value = e.target.value;
-    selected.value = [];
-    addTableData.value = [];
-  };
-
-  const changeNotExistsIds = (notExistsIds: string[]) => {
-    selected.value = notExistsIds;
-  };
-
-  const addTable = (addRecord: AddRecordType) => {
-    if (addRecord.lastName === '') {
-      return;
-    }
-    addTableData.value = [
-      ...addTableData.value,
-      {
-        id: addRecord.id,
-        startDate: '',
-        endDate: '',
-        expectedEndDate: '',
-        sales: addRecord.sales,
-        cost: addRecord.cost,
-        lastName: addRecord.lastName,
-        firstName: '',
-        lastNameKana: '',
-        firstNameKana: '',
-        sex: null,
-        company: '',
-      },
-    ];
-  };
-
-  onMounted(() => {
-    setProjectList();
-    setProjectResponse();
-  });
+onMounted(() => {
+  setProjectList();
+  setProjectResponse();
+});
 </script>
 
 <template>

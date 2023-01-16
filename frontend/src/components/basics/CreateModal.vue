@@ -1,20 +1,20 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
-  interface Props {
-    show?: boolean;
-  }
-  const props = withDefaults(defineProps<Props>(), {
-    show: false,
-  });
-  const emit = defineEmits(['closeModal']);
-  const showModal = ref<boolean>(false);
-  watch(
-    () => props.show,
-    (show) => {
-      showModal.value = show;
-    },
-  );
+interface Props {
+  show?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+  show: false,
+});
+const emit = defineEmits(['closeModal']);
+const showModal = ref<boolean>(false);
+watch(
+  () => props.show,
+  (show) => {
+    showModal.value = show;
+  },
+);
 </script>
 
 <template>

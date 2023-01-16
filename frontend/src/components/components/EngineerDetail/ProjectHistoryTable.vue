@@ -1,46 +1,46 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import ProjectHistoryCreateModal from '@/components/EngineerDetail/ProjectHistoryCreateModal.vue';
-  import { EngineerResponse, ProjectHistoryResponse, ProjectHistoryPostInput } from '@/functions/Repository';
+import { ref } from 'vue';
+import ProjectHistoryCreateModal from '@/components/EngineerDetail/ProjectHistoryCreateModal.vue';
+import { EngineerResponse, ProjectHistoryResponse, ProjectHistoryPostInput } from '@/functions/Repository';
 
-  const props = defineProps<{
-    engineerId: number;
-    engineerData: EngineerResponse;
-    tableData: ProjectHistoryResponse[];
-  }>();
+const props = defineProps<{
+  engineerId: number;
+  engineerData: EngineerResponse;
+  tableData: ProjectHistoryResponse[];
+}>();
 
-  const emit = defineEmits(['postProjectHistory']);
-  const postProjectHistory = (projectHistoryInput: ProjectHistoryPostInput) => {
-    emit('postProjectHistory', projectHistoryInput);
-  };
+const emit = defineEmits(['postProjectHistory']);
+const postProjectHistory = (projectHistoryInput: ProjectHistoryPostInput) => {
+  emit('postProjectHistory', projectHistoryInput);
+};
 
-  const showModal = ref<boolean>(false);
-  const modalType = ref<number>(0);
-  const updateData = ref<ProjectHistoryResponse | null>(null);
+const showModal = ref<boolean>(false);
+const modalType = ref<number>(0);
+const updateData = ref<ProjectHistoryResponse | null>(null);
 
-  const createModal = () => {
-    modalType.value = 0;
-    openModal();
-  };
-  const updateModal = (data: ProjectHistoryResponse) => {
-    modalType.value = 1;
-    updateData.value = data;
-    openModal();
-  };
+const createModal = () => {
+  modalType.value = 0;
+  openModal();
+};
+// const updateModal = (data: ProjectHistoryResponse) => {
+//   modalType.value = 1;
+//   updateData.value = data;
+//   openModal();
+// };
 
-  const openModal = () => {
-    showModal.value = !showModal.value;
-  };
-  const closeModal = () => {
-    showModal.value = false;
-  };
+const openModal = () => {
+  showModal.value = !showModal.value;
+};
+const closeModal = () => {
+  showModal.value = false;
+};
 
-  const viewProfit = (sales: number | null, cost: number | null): string => {
-    return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : '';
-  };
-  const viewProfitRate = (sales: number | null, cost: number | null): string => {
-    return sales && cost ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %` : '';
-  };
+const viewProfit = (sales: number | null, cost: number | null): string => {
+  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : '';
+};
+const viewProfitRate = (sales: number | null, cost: number | null): string => {
+  return sales && cost ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %` : '';
+};
 </script>
 
 <template>

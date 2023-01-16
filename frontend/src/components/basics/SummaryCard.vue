@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  defineProps<{
-    icon: string;
-    title: string;
-    value: string;
-  }>();
+defineProps<{
+  icon: string;
+  title: string;
+  value: string;
+}>();
 </script>
 <template>
   <!--Metric Card-->

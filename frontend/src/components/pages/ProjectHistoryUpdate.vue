@@ -1,66 +1,66 @@
 <script setup lang="ts">
-  import { ref, computed, onMounted } from 'vue';
-  import { useRoute, useRouter } from 'vue-router';
-  import {
-    getProjectHistory,
-    ProjectHistoryResponse,
-    updateProjectHistory,
-    ProjectHistoryForm,
-  } from '@/functions/Repository';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import {
+  getProjectHistory,
+  ProjectHistoryResponse,
+  updateProjectHistory,
+  ProjectHistoryForm,
+} from '@/functions/Repository';
 
-  const route = useRoute();
-  const router = useRouter();
-  const projectHistoryResponse = ref<ProjectHistoryResponse>({
-    id: 0,
-    startDate: '',
-    endDate: '',
-    expectedEndDate: '',
-    utilizationRate: 0,
-    salesContractCompany: '',
-    purchaseContractCompany: '',
-    contractType: 0,
-    sales: 0,
-    cost: 0,
-    projectId: 0,
-    engineerId: 0,
-  });
-  const projectHistoryForm = computed((): ProjectHistoryForm => {
-    return {
-      id: projectHistoryResponse.value.id,
-      startDate: projectHistoryResponse.value.startDate?.substring(0, 10),
-      endDate: ((endDate) => (!endDate ? null : endDate.substring(0, 10)))(projectHistoryResponse.value.endDate),
-      expectedEndDate: ((expectedEndDate) => (!expectedEndDate ? null : expectedEndDate.substring(0, 10)))(
-        projectHistoryResponse.value.expectedEndDate,
-      ),
-      utilizationRate: projectHistoryResponse.value.utilizationRate,
-      salesContractCompany: projectHistoryResponse.value.salesContractCompany,
-      purchaseContractCompany: projectHistoryResponse.value.purchaseContractCompany,
-      contractType: projectHistoryResponse.value.contractType,
-      sales: projectHistoryResponse.value.sales,
-      cost: projectHistoryResponse.value.cost,
-      projectId: projectHistoryResponse.value.projectId,
-      engineerId: projectHistoryResponse.value.engineerId,
-    };
-  });
-
-  const reloadProjectHistoryResponse = async () => {
-    projectHistoryResponse.value = await getProjectHistory(String(route.query.projectHistoryId));
+const route = useRoute();
+const router = useRouter();
+const projectHistoryResponse = ref<ProjectHistoryResponse>({
+  id: 0,
+  startDate: '',
+  endDate: '',
+  expectedEndDate: '',
+  utilizationRate: 0,
+  salesContractCompany: '',
+  purchaseContractCompany: '',
+  contractType: 0,
+  sales: 0,
+  cost: 0,
+  projectId: 0,
+  engineerId: 0,
+});
+const projectHistoryForm = computed((): ProjectHistoryForm => {
+  return {
+    id: projectHistoryResponse.value.id,
+    startDate: projectHistoryResponse.value.startDate?.substring(0, 10),
+    endDate: ((endDate) => (!endDate ? null : endDate.substring(0, 10)))(projectHistoryResponse.value.endDate),
+    expectedEndDate: ((expectedEndDate) => (!expectedEndDate ? null : expectedEndDate.substring(0, 10)))(
+      projectHistoryResponse.value.expectedEndDate,
+    ),
+    utilizationRate: projectHistoryResponse.value.utilizationRate,
+    salesContractCompany: projectHistoryResponse.value.salesContractCompany,
+    purchaseContractCompany: projectHistoryResponse.value.purchaseContractCompany,
+    contractType: projectHistoryResponse.value.contractType,
+    sales: projectHistoryResponse.value.sales,
+    cost: projectHistoryResponse.value.cost,
+    projectId: projectHistoryResponse.value.projectId,
+    engineerId: projectHistoryResponse.value.engineerId,
   };
+});
 
-  const postProjectHistory = async () => {
-    await updateProjectHistory(String(route.query.projectHistoryId), projectHistoryForm.value);
+const reloadProjectHistoryResponse = async () => {
+  projectHistoryResponse.value = await getProjectHistory(String(route.query.projectHistoryId));
+};
 
-    goEngineerDetail(projectHistoryForm.value.engineerId);
-  };
+const postProjectHistory = async () => {
+  await updateProjectHistory(String(route.query.projectHistoryId), projectHistoryForm.value);
 
-  const goEngineerDetail = (engineerId: number | null) => {
-    if (engineerId) {
-      router.push(`/engineer-detail?engineerId=${engineerId}`);
-    }
-  };
-  onMounted(() => {
-    reloadProjectHistoryResponse();
-  });
+  goEngineerDetail(projectHistoryForm.value.engineerId);
+};
+
+const goEngineerDetail = (engineerId: number | null) => {
+  if (engineerId) {
+    router.push(`/engineer-detail?engineerId=${engineerId}`);
+  }
+};
+onMounted(() => {
+  reloadProjectHistoryResponse();
+});
 </script>
 
 <template>

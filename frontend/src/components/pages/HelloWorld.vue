@@ -1,14 +1,14 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import CreateModal from '@/basics/CreateModal.vue';
+import { ref } from 'vue';
+import CreateModal from '@/basics/CreateModal.vue';
 
-  defineProps<{ msg: string }>();
+defineProps<{ msg: string }>();
 
-  const count = ref(0);
-  const showModal = ref<boolean>(false);
-  const closeModal = () => {
-    showModal.value = false;
-  };
+const count = ref(0);
+const showModal = ref<boolean>(false);
+const closeModal = () => {
+  showModal.value = false;
+};
 </script>
 
 <template>

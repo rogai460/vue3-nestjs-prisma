@@ -9,3 +9,11 @@ export const viewEmployeeCategory = (employeeCategory: number | null) =>
   employeeCategory === 0 ? '社員' : 'パートナー';
 
 export const viewLaborCost = (laborCost: number | null) => `${!laborCost ? '-' : `¥ ${laborCost.toLocaleString()}`}`;
+
+export const viewProfit = (sales: number | null, cost: number | null): string => {
+  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : '';
+};
+
+export const viewProfitRate = (sales: number | null, cost: number | null): string => {
+  return sales && cost ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %` : '';
+};

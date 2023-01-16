@@ -1,81 +1,81 @@
 <script setup lang="ts">
-  import { ref, onMounted, watch, computed } from 'vue';
-  import { EngineerResponse, createEngineer, updateEngineer, EngineerInput } from '@/functions/Repository';
+import { ref, onMounted, watch, computed } from 'vue';
+import { EngineerResponse, createEngineer, updateEngineer, EngineerInput } from '@/functions/Repository';
 
-  const props = defineProps<{
-    show: boolean;
-    modalType: number;
-    data: EngineerResponse | null;
-  }>();
+const props = defineProps<{
+  show: boolean;
+  modalType: number;
+  data: EngineerResponse | null;
+}>();
 
-  const engineerInput = ref<EngineerInput>();
-  const engineerInputBind = computed<EngineerInput>({
-    get() {
-      if (props.data && props.modalType == 1) {
-        engineerInput.value = {
-          lastName: props.data.lastName ?? '',
-          firstName: props.data.firstName ?? '',
-          lastNameKana: props.data.lastNameKana ?? '',
-          firstNameKana: props.data.firstNameKana ?? '',
-          sex: props.data.sex ?? null,
-          employeeId: props.data.employeeId ?? null,
-          employeeCategory: props.data.employeeCategory ?? null,
-          laborCost: props.data.laborCost ?? null,
-          company: props.data.company ?? '',
-        };
-      } else {
-        engineerInput.value = {
-          lastName: '',
-          firstName: '',
-          lastNameKana: '',
-          firstNameKana: '',
-          sex: null,
-          employeeId: null,
-          employeeCategory: null,
-          laborCost: null,
-          company: '',
-        };
-      }
-      return engineerInput.value;
-    },
-    set(value) {
-      engineerInput.value = value;
-    },
-  });
-
-  const postCreateEngineer = async () => {
-    await createEngineer(engineerInputBind.value);
-    // reloadEngineerResponse();
-    emit('closeModal');
-  };
-
-  const postUpdateEngineer = async () => {
-    const engineerId = Number(props.data?.id);
-    if (!engineerId) {
-      return;
+const engineerInput = ref<EngineerInput>();
+const engineerInputBind = computed<EngineerInput>({
+  get() {
+    if (props.data && props.modalType == 1) {
+      engineerInput.value = {
+        lastName: props.data.lastName ?? '',
+        firstName: props.data.firstName ?? '',
+        lastNameKana: props.data.lastNameKana ?? '',
+        firstNameKana: props.data.firstNameKana ?? '',
+        sex: props.data.sex ?? null,
+        employeeId: props.data.employeeId ?? null,
+        employeeCategory: props.data.employeeCategory ?? null,
+        laborCost: props.data.laborCost ?? null,
+        company: props.data.company ?? '',
+      };
+    } else {
+      engineerInput.value = {
+        lastName: '',
+        firstName: '',
+        lastNameKana: '',
+        firstNameKana: '',
+        sex: null,
+        employeeId: null,
+        employeeCategory: null,
+        laborCost: null,
+        company: '',
+      };
     }
-    await updateEngineer(engineerId, engineerInputBind.value);
-    // reloadEngineerResponse();
-    emit('closeModal');
-  };
+    return engineerInput.value;
+  },
+  set(value) {
+    engineerInput.value = value;
+  },
+});
 
-  const emit = defineEmits(['closeModal']);
-  // const commitProjectHistory = () => {
-  //   emit('postProjectHistory', projectHistoryInput.value);
-  //   emit('closeModal');
-  // };
+const postCreateEngineer = async () => {
+  await createEngineer(engineerInputBind.value);
+  // reloadEngineerResponse();
+  emit('closeModal');
+};
 
-  const showModal = ref<boolean>(false);
+const postUpdateEngineer = async () => {
+  const engineerId = Number(props.data?.id);
+  if (!engineerId) {
+    return;
+  }
+  await updateEngineer(engineerId, engineerInputBind.value);
+  // reloadEngineerResponse();
+  emit('closeModal');
+};
 
-  watch(
-    () => props.show,
-    (show) => {
-      showModal.value = show;
-    },
-  );
-  onMounted(() => {
-    // projectHistoryInput.value = initProjectHistoryInput;
-  });
+const emit = defineEmits(['closeModal']);
+// const commitProjectHistory = () => {
+//   emit('postProjectHistory', projectHistoryInput.value);
+//   emit('closeModal');
+// };
+
+const showModal = ref<boolean>(false);
+
+watch(
+  () => props.show,
+  (show) => {
+    showModal.value = show;
+  },
+);
+onMounted(() => {
+  // projectHistoryInput.value = initProjectHistoryInput;
+});
 </script>
 
 <template>

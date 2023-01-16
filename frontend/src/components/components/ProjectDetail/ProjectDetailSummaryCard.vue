@@ -1,20 +1,20 @@
 <script setup lang="ts">
-  import SummaryCard from '@/basics/SummaryCard.vue';
+import SummaryCard from '@/basics/SummaryCard.vue';
 
-  const props = defineProps<{
-    sumSales: number;
-    sumProfitRate: number;
-    aveCost: number;
-  }>();
+const props = defineProps<{
+  sumSales: number;
+  sumProfitRate: number;
+  aveCost: number;
+}>();
 
-  const sumSalesCard = (): string =>
-    `¥ ${(Math.floor(props.sumSales / 1000000) === 0 ? props.sumSales / 1000 : props.sumSales / 1000000).toFixed(1)} ${
-      Math.floor(props.sumSales / 1000000) === 0 ? 'K+' : 'M+'
-    }`;
+const sumSalesCard = (): string =>
+  `¥ ${(Math.floor(props.sumSales / 1000000) === 0 ? props.sumSales / 1000 : props.sumSales / 1000000).toFixed(1)} ${
+    Math.floor(props.sumSales / 1000000) === 0 ? 'K+' : 'M+'
+  }`;
 
-  const sumProfitRateCard = (): string => `${Math.round(props.sumProfitRate * 100 * 10) / 10} %`;
+const sumProfitRateCard = (): string => `${Math.round(props.sumProfitRate * 100 * 10) / 10} %`;
 
-  const aveCostCard = (): string => `¥ ${Math.round(props.aveCost)?.toLocaleString()}`;
+const aveCostCard = (): string => `¥ ${Math.round(props.aveCost)?.toLocaleString()}`;
 </script>
 
 <template>

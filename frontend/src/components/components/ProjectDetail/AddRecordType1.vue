@@ -1,40 +1,40 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { getRandomString } from '@/functions/CryptoUtil';
+import { ref } from 'vue';
+import { getRandomString } from '@/functions/CryptoUtil';
 
-  export interface AddRecordType {
-    id: string;
-    lastName: string;
-    sales: number;
-    cost: number;
-  }
+export interface AddRecordType {
+  id: string;
+  lastName: string;
+  sales: number;
+  cost: number;
+}
 
-  // defineProps<{}>();
+// defineProps<{}>();
 
-  const addRecord = ref<AddRecordType>({
+const addRecord = ref<AddRecordType>({
+  id: '',
+  lastName: '',
+  sales: 0,
+  cost: 0,
+});
+
+const emit = defineEmits(['addTable']);
+const addTable = () => {
+  const sales: number = addRecord.value.sales ? addRecord.value.sales : 0;
+  const cost: number = addRecord.value.cost ? addRecord.value.cost : 0;
+
+  console.log(getRandomString());
+  addRecord.value.id = getRandomString();
+  addRecord.value.sales = sales * 10000;
+  addRecord.value.cost = cost * 10000;
+  emit('addTable', addRecord.value);
+  addRecord.value = {
     id: '',
     lastName: '',
     sales: 0,
     cost: 0,
-  });
-
-  const emit = defineEmits(['addTable']);
-  const addTable = () => {
-    const sales: number = addRecord.value.sales ? addRecord.value.sales : 0;
-    const cost: number = addRecord.value.cost ? addRecord.value.cost : 0;
-
-    console.log(getRandomString());
-    addRecord.value.id = getRandomString();
-    addRecord.value.sales = sales * 10000;
-    addRecord.value.cost = cost * 10000;
-    emit('addTable', addRecord.value);
-    addRecord.value = {
-      id: '',
-      lastName: '',
-      sales: 0,
-      cost: 0,
-    };
   };
+};
 </script>
 
 <template>

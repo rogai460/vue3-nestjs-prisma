@@ -1,55 +1,55 @@
 <script setup lang="ts">
-  import { ref, onMounted, watch } from 'vue';
-  import { ProjectHistoryResponse, ProjectHistoryPostInput } from '@/functions/Repository';
+import { ref, onMounted, watch } from 'vue';
+import { ProjectHistoryResponse, ProjectHistoryPostInput } from '@/functions/Repository';
 
-  // type Props = {
-  //   show: boolean;
-  //   modalType: number;
-  //   engineerId: number;
-  // };
-  const props = defineProps<{
-    show: boolean;
-    modalType: number;
-    engineerId: number;
-    data: ProjectHistoryResponse | null;
-  }>();
-  // const props = withDefaults(defineProps<Props>(), {
-  //   show: false,
-  //   modalType: 0,
-  //   engineerId: 0,
-  // });
+// type Props = {
+//   show: boolean;
+//   modalType: number;
+//   engineerId: number;
+// };
+const props = defineProps<{
+  show: boolean;
+  modalType: number;
+  engineerId: number;
+  data: ProjectHistoryResponse | null;
+}>();
+// const props = withDefaults(defineProps<Props>(), {
+//   show: false,
+//   modalType: 0,
+//   engineerId: 0,
+// });
 
-  const emit = defineEmits(['closeModal', 'postProjectHistory']);
-  const commitProjectHistory = () => {
-    emit('postProjectHistory', projectHistoryInput.value);
-    emit('closeModal');
-  };
+const emit = defineEmits(['closeModal', 'postProjectHistory']);
+const commitProjectHistory = () => {
+  emit('postProjectHistory', projectHistoryInput.value);
+  emit('closeModal');
+};
 
-  const initProjectHistoryInput = {
-    startDate: null,
-    endDate: null,
-    expectedEndDate: null,
-    utilizationRate: null,
-    salesContractCompany: null,
-    purchaseContractCompany: null,
-    contractType: null,
-    cost: null,
-    sales: null,
-    projectId: 0,
-    engineerId: Number(props.engineerId),
-  };
-  const projectHistoryInput = ref<ProjectHistoryPostInput>(initProjectHistoryInput);
+const initProjectHistoryInput = {
+  startDate: null,
+  endDate: null,
+  expectedEndDate: null,
+  utilizationRate: null,
+  salesContractCompany: null,
+  purchaseContractCompany: null,
+  contractType: null,
+  cost: null,
+  sales: null,
+  projectId: 0,
+  engineerId: Number(props.engineerId),
+};
+const projectHistoryInput = ref<ProjectHistoryPostInput>(initProjectHistoryInput);
 
-  const showModal = ref<boolean>(false);
-  watch(
-    () => props.show,
-    (show) => {
-      showModal.value = show;
-    },
-  );
-  onMounted(() => {
-    projectHistoryInput.value = initProjectHistoryInput;
-  });
+const showModal = ref<boolean>(false);
+watch(
+  () => props.show,
+  (show) => {
+    showModal.value = show;
+  },
+);
+onMounted(() => {
+  projectHistoryInput.value = initProjectHistoryInput;
+});
 </script>
 
 <template>

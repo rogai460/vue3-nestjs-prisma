@@ -1,27 +1,27 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { ProjectResponse } from '@/functions/Repository';
+import { ref } from 'vue';
+import { ProjectResponse } from '@/functions/Repository';
 
-  defineProps<{
-    projectInfo: ProjectResponse | null;
-    tableData: any;
-    sumSales: number;
-    sumCost: number;
-    sumProfit: number;
-    sumProfitRate: number;
-  }>();
-  const dataIds = ref<string[]>([]);
+defineProps<{
+  projectInfo: ProjectResponse | null;
+  tableData: any;
+  sumSales: number;
+  sumCost: number;
+  sumProfit: number;
+  sumProfitRate: number;
+}>();
+const dataIds = ref<string[]>([]);
 
-  const viewProfit = (sales: number | null, cost: number | null): string => {
-    return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : '';
-  };
-  const viewProfitRate = (sales: number | null, cost: number | null): string => {
-    return sales && cost ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %` : '';
-  };
-  const emit = defineEmits(['changeNotExistsIds']);
-  const notExists = () => {
-    emit('changeNotExistsIds', dataIds.value);
-  };
+const viewProfit = (sales: number | null, cost: number | null): string => {
+  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : '';
+};
+const viewProfitRate = (sales: number | null, cost: number | null): string => {
+  return sales && cost ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %` : '';
+};
+const emit = defineEmits(['changeNotExistsIds']);
+const notExists = () => {
+  emit('changeNotExistsIds', dataIds.value);
+};
 </script>
 
 <template>

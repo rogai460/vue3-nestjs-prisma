@@ -1,37 +1,37 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { viewFullName, viewFullNameKana, viewSex, viewEmployeeCategory, viewLaborCost } from '@/functions/ViewUtil';
-  import { EngineerResponse } from '@/functions/Repository';
-  import EngineerCreateModal from '@/components/EngineerList/EngineerCreateModal.vue';
+import { ref } from 'vue';
+import { viewFullName, viewFullNameKana, viewSex, viewEmployeeCategory, viewLaborCost } from '@/functions/ViewUtil';
+import { EngineerResponse } from '@/functions/Repository';
+import EngineerCreateModal from '@/components/EngineerList/EngineerCreateModal.vue';
 
-  defineProps<{
-    engineerTableData: EngineerResponse[];
-  }>();
+defineProps<{
+  engineerTableData: EngineerResponse[];
+}>();
 
-  const emit = defineEmits(['postEngineer']);
+const emit = defineEmits(['postEngineer']);
 
-  const showModal = ref<boolean>(false);
-  const modalType = ref<number>(0);
-  const updateData = ref<EngineerResponse | null>(null);
+const showModal = ref<boolean>(false);
+const modalType = ref<number>(0);
+const updateData = ref<EngineerResponse | null>(null);
 
-  const createModal = () => {
-    modalType.value = 0;
-    openModal();
-  };
-  const updateModal = (data: EngineerResponse) => {
-    modalType.value = 1;
-    updateData.value = data;
-    openModal();
-  };
+const createModal = () => {
+  modalType.value = 0;
+  openModal();
+};
+const updateModal = (data: EngineerResponse) => {
+  modalType.value = 1;
+  updateData.value = data;
+  openModal();
+};
 
-  const openModal = () => {
-    showModal.value = !showModal.value;
-  };
-  const closeModal = () => {
-    modalType.value = 0;
-    updateData.value = null;
-    showModal.value = false;
-  };
+const openModal = () => {
+  showModal.value = !showModal.value;
+};
+const closeModal = () => {
+  modalType.value = 0;
+  updateData.value = null;
+  showModal.value = false;
+};
 </script>
 
 <template>
