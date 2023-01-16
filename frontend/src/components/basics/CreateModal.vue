@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { EngineerInput } from "@/pages/EngineerList.vue";
+import { ref, watch } from 'vue';
 
 interface Props {
   show?: boolean;
@@ -8,26 +7,14 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   show: false,
 });
-const emit = defineEmits(["closeModal"]);
+const emit = defineEmits(['closeModal']);
 const showModal = ref<boolean>(false);
 watch(
   () => props.show,
   (show) => {
     showModal.value = show;
-  }
+  },
 );
-
-const engineerInput = ref<EngineerInput>({
-  lastName: "",
-  firstName: "",
-  lastNameKana: "",
-  firstNameKana: "",
-  sex: null,
-  employeeId: null,
-  employeeCategory: null,
-  laborCost: null,
-  company: "",
-});
 </script>
 
 <template>

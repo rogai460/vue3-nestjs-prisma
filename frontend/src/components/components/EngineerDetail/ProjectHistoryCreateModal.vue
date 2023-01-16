@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import { ProjectHistoryPostInput } from '@/pages/EngineerDetail.vue';
-import { ProjectHistoryResponse } from '@/@types/ApiReqRes';
+import {
+  ProjectHistoryResponse,
+  ProjectHistoryPostInput,
+} from '@/functions/Repository';
 
 // type Props = {
 //   show: boolean;

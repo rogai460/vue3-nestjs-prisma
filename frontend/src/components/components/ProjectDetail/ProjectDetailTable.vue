@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { ProjectResponse, ProjectHistoryResponse } from "@/@types/ApiReqRes";
+import { ref } from 'vue';
+import { ProjectResponse } from '@/functions/Repository';
 
 defineProps<{
   projectInfo: ProjectResponse | null;
@@ -13,16 +13,16 @@ defineProps<{
 const dataIds = ref<string[]>([]);
 
 const viewProfit = (sales: number | null, cost: number | null): string => {
-  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : "";
+  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : '';
 };
 const viewProfitRate = (sales: number | null, cost: number | null): string => {
   return sales && cost
     ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %`
-    : "";
+    : '';
 };
-const emit = defineEmits(["changeNotExistsIds"]);
+const emit = defineEmits(['changeNotExistsIds']);
 const notExists = () => {
-  emit("changeNotExistsIds", dataIds.value);
+  emit('changeNotExistsIds', dataIds.value);
 };
 </script>
 

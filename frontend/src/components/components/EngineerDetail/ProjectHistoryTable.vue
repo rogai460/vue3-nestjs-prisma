@@ -1,24 +1,26 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import ProjectHistoryCreateModal from "@/components/EngineerDetail/ProjectHistoryCreateModal.vue";
+import { ref } from 'vue';
+import ProjectHistoryCreateModal from '@/components/EngineerDetail/ProjectHistoryCreateModal.vue';
 import {
+  EngineerResponse,
   ProjectHistoryResponse,
   ProjectHistoryPostInput,
-} from "@/@types/ApiReqRes";
+} from '@/functions/Repository';
 
 const props = defineProps<{
   engineerId: number;
+  engineerData: EngineerResponse;
   tableData: ProjectHistoryResponse[];
 }>();
 
-const emit = defineEmits(["postProjectHistory"]);
+const emit = defineEmits(['postProjectHistory']);
 const postProjectHistory = (projectHistoryInput: ProjectHistoryPostInput) => {
-  emit("postProjectHistory", projectHistoryInput);
+  emit('postProjectHistory', projectHistoryInput);
 };
 
 const showModal = ref<boolean>(false);
 const modalType = ref<number>(0);
-const updateData = ref<ProjectHistoryResponse|null>(null);
+const updateData = ref<ProjectHistoryResponse | null>(null);
 
 const createModal = () => {
   modalType.value = 0;
@@ -38,16 +40,41 @@ const closeModal = () => {
 };
 
 const viewProfit = (sales: number | null, cost: number | null): string => {
-  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : "";
+  return sales && cost ? `¥ ${(sales - cost).toLocaleString()}` : '';
 };
 const viewProfitRate = (sales: number | null, cost: number | null): string => {
   return sales && cost
     ? `${Math.round(((sales - cost) / sales) * 100 * 10) / 10} %`
-    : "";
+    : '';
 };
 </script>
 
 <template>
+  <dl
+    class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
+  >
+    <div class="flex flex-col py-3">
+      <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">所属</dt>
+      <dd class="text-lg font-semibold">
+        {{ engineerData?.company }}
+      </dd>
+    </div>
+    <div class="flex flex-col pb-3">
+      <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">氏名</dt>
+      <dd class="text-lg font-semibold">
+        {{ engineerData?.lastName }}
+        {{ engineerData?.firstName }}
+      </dd>
+    </div>
+
+    <div class="flex flex-col pt-3">
+      <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">労務</dt>
+      <dd class="text-lg font-semibold">
+        {{ engineerData?.laborCost }}
+      </dd>
+    </div>
+  </dl>
+  <hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
   <div class="grid md:grid-cols-6 md:gap-4">
     <h5
       class="col-span-5 py-4 font-bold uppercase text-gray-600 dark:text-white"
@@ -70,6 +97,7 @@ const viewProfitRate = (sales: number | null, cost: number | null): string => {
       @closeModal="closeModal"
     />
   </div>
+
   <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
       <thead
@@ -95,10 +123,10 @@ const viewProfitRate = (sales: number | null, cost: number | null): string => {
           class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
         >
           <td scope="col" class="py-3 px-6">
-            {{ dt.project.projectName }} （{{ dt.project.projectNameMask }}）
+            {{ dt.project?.projectName }} （{{ dt.project?.projectNameMask }}）
           </td>
           <td scope="col" class="py-3 px-6">
-            {{ dt.project.endUser }}
+            {{ dt.project?.endUser }}
           </td>
           <td scope="col" class="py-3 px-6">
             {{ dt.startDate?.substring(0, 10) }}

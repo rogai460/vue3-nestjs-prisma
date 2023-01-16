@@ -6,9 +6,11 @@ import { AddRecordType } from '@/components/ProjectDetail/AddRecordType1.vue';
 import AddRecordType1 from '@/components/ProjectDetail/AddRecordType1.vue';
 import ProjectDetailSummaryCard from '@/components/ProjectDetail/ProjectDetailSummaryCard.vue';
 import {
+  getProject,
   ProjectResponse,
+  getProjectWithHistory,
   ProjectWithHistoryResponse,
-} from '@/@types/ApiReqRes';
+} from '@/functions/Repository';
 
 export interface TableData {
   id: string;
@@ -21,7 +23,7 @@ export interface TableData {
   firstName: string | null;
   lastNameKana: string | null;
   firstNameKana: string | null;
-  sex: string | null;
+  sex: number | null;
   company: string | null;
 }
 
@@ -32,7 +34,6 @@ const projectId = ref<string>(
   route.query.projectId ? String(route.query.projectId) : '',
 );
 const projectList = ref<ProjectResponse[]>([]);
-const error = ref(null);
 const selected = ref<string[]>([]);
 
 const addTableData = ref<TableData[]>([]);
@@ -47,12 +48,12 @@ const tableData = computed((): TableData[] => {
         expectedEndDate: ph.expectedEndDate,
         sales: ph.sales,
         cost: ph.cost,
-        lastName: ph.engineer.lastName,
-        firstName: ph.engineer.firstName,
-        lastNameKana: ph.engineer.lastNameKana,
-        firstNameKana: ph.engineer.firstNameKana,
-        sex: ph.engineer.sex,
-        company: ph.engineer.company,
+        lastName: ph.engineer ? ph.engineer.lastName : '',
+        firstName: ph.engineer ? ph.engineer.firstName : null,
+        lastNameKana: ph.engineer ? ph.engineer.lastNameKana : null,
+        firstNameKana: ph.engineer ? ph.engineer.firstNameKana : null,
+        sex: ph.engineer ? ph.engineer.sex : null,
+        company: ph.engineer ? ph.engineer.company : null,
       }));
   return addTableData.value ? [...t, ...addTableData.value] : t;
 });
@@ -79,35 +80,12 @@ const aveCost = computed(
 const sumProfit = computed(() => sumSales.value - sumCost.value);
 const sumProfitRate = computed(() => sumProfit.value / sumSales.value);
 
-const getProject = async () => {
-  try {
-    // const response = await fetch("../production/project.json");
-    const response = await fetch('http://127.0.0.1:3000/project');
-    console.log(response); //statusが OKか確認する。
-    if (!response.ok) {
-      throw Error('No data available');
-    }
-    projectList.value = await response.json();
-  } catch (err: any) {
-    error.value = err.message;
-    console.log(error.value);
-  }
+const setProjectList = async () => {
+  projectList.value = await getProject();
 };
 
-const getProjectHistory = async () => {
-  try {
-    // const response = await fetch("../production/project/history.json");
-    const response = await fetch('http://127.0.0.1:3000/project/history');
-    console.log(response); //statusが OKか確認する。
-    if (!response.ok) {
-      //okというプロパティがありtrue/falseで返す
-      throw Error('No data available');
-    }
-    projectResponse.value = await response.json();
-  } catch (err: any) {
-    error.value = err.message;
-    console.log(error.value);
-  }
+const setProjectResponse = async () => {
+  projectResponse.value = await getProjectWithHistory();
 };
 
 const projectChange = (e: any) => {
@@ -137,20 +115,19 @@ const addTable = (addRecord: AddRecordType) => {
       firstName: '',
       lastNameKana: '',
       firstNameKana: '',
-      sex: '',
+      sex: null,
       company: '',
     },
   ];
 };
 
 onMounted(() => {
-  getProject();
-  getProjectHistory();
+  setProjectList();
+  setProjectResponse();
 });
 </script>
 
 <template>
-  {{ addTableData }}
   <div class="w-full md:px-0 md:mt-8 mb-16 text-gray-800 leading-normal">
     <div class="flex justify-left">
       <div class="mb-3 xl:w-96">

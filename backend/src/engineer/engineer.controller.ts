@@ -29,7 +29,7 @@ export class EngineerController {
   }
 
   @Post('create')
-  async createEngineers(@Body() postData: EngineerInput): Promise<Engineer> {
+  async createEngineer(@Body() postData: EngineerInput): Promise<Engineer> {
     return this.engineerService.createEngineer({
       lastName: postData.lastName,
       firstName: postData.firstName,
@@ -38,6 +38,23 @@ export class EngineerController {
       sex: postData.sex,
       employeeCategory: postData.employeeCategory,
       laborCost: postData.laborCost,
+      company: postData.company,
+    });
+  }
+
+  @Post('update/:engineerId')
+  async updateEngineer(
+    @Param('engineerId') engineerId: number,
+    @Body() postData: EngineerInput,
+  ): Promise<Engineer> {
+    return this.engineerService.updateEngineer(engineerId, {
+      lastName: postData.lastName,
+      firstName: postData.firstName,
+      lastNameKana: postData.lastNameKana,
+      firstNameKana: postData.firstNameKana,
+      sex: Number(postData.sex),
+      employeeCategory: Number(postData.employeeCategory),
+      laborCost: Number(postData.laborCost),
       company: postData.company,
     });
   }

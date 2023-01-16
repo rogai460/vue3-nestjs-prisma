@@ -1,21 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-
-export interface ProjectHistoryForm {
-  id: number | null;
-  startDate: string | null;
-  endDate: string | null;
-  expectedEndDate: string | null;
-  utilizationRate: number | null;
-  salesContractCompany: string | null;
-  purchaseContractCompany: string | null;
-  contractType: number | null;
-  sales: number | null;
-  cost: number | null;
-  projectId: number | null;
-  engineerId: number | null;
-}
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { ProjectHistoryForm } from '@/functions/Repository';
 
 defineProps<{
   projectHistoryForm: ProjectHistoryForm;
@@ -31,7 +17,7 @@ onMounted(() => {
   // projectHistoryFormModel.value = projectHistoryForm;
   projectHistoryFormModel.value = {
     id: 1,
-    startDate: "2022-11-11",
+    startDate: '2022-11-11',
     endDate: null,
     expectedEndDate: null,
     utilizationRate: null,
@@ -47,8 +33,6 @@ onMounted(() => {
 </script>
 
 <template>
-  {{ projectHistoryForm }}
-  <!-- {{ projectHistoryFormModel }} -->
   <form>
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 mb-6 w-full group">
