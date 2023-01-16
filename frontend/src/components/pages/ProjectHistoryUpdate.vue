@@ -1,81 +1,70 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import {
-  getProjectHistory,
-  ProjectHistoryResponse,
-  updateProjectHistory,
-  ProjectHistoryForm,
-} from '@/functions/Repository';
+  import { ref, computed, onMounted } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import {
+    getProjectHistory,
+    ProjectHistoryResponse,
+    updateProjectHistory,
+    ProjectHistoryForm,
+  } from '@/functions/Repository';
 
-const route = useRoute();
-const router = useRouter();
-const projectHistoryResponse = ref<ProjectHistoryResponse>({
-  id: 0,
-  startDate: '',
-  endDate: '',
-  expectedEndDate: '',
-  utilizationRate: 0,
-  salesContractCompany: '',
-  purchaseContractCompany: '',
-  contractType: 0,
-  sales: 0,
-  cost: 0,
-  projectId: 0,
-  engineerId: 0,
-});
-const projectHistoryForm = computed((): ProjectHistoryForm => {
-  return {
-    id: projectHistoryResponse.value.id,
-    startDate: projectHistoryResponse.value.startDate?.substring(0, 10),
-    endDate: ((endDate) => (!endDate ? null : endDate.substring(0, 10)))(
-      projectHistoryResponse.value.endDate,
-    ),
-    expectedEndDate: ((expectedEndDate) =>
-      !expectedEndDate ? null : expectedEndDate.substring(0, 10))(
-      projectHistoryResponse.value.expectedEndDate,
-    ),
-    utilizationRate: projectHistoryResponse.value.utilizationRate,
-    salesContractCompany: projectHistoryResponse.value.salesContractCompany,
-    purchaseContractCompany:
-      projectHistoryResponse.value.purchaseContractCompany,
-    contractType: projectHistoryResponse.value.contractType,
-    sales: projectHistoryResponse.value.sales,
-    cost: projectHistoryResponse.value.cost,
-    projectId: projectHistoryResponse.value.projectId,
-    engineerId: projectHistoryResponse.value.engineerId,
+  const route = useRoute();
+  const router = useRouter();
+  const projectHistoryResponse = ref<ProjectHistoryResponse>({
+    id: 0,
+    startDate: '',
+    endDate: '',
+    expectedEndDate: '',
+    utilizationRate: 0,
+    salesContractCompany: '',
+    purchaseContractCompany: '',
+    contractType: 0,
+    sales: 0,
+    cost: 0,
+    projectId: 0,
+    engineerId: 0,
+  });
+  const projectHistoryForm = computed((): ProjectHistoryForm => {
+    return {
+      id: projectHistoryResponse.value.id,
+      startDate: projectHistoryResponse.value.startDate?.substring(0, 10),
+      endDate: ((endDate) => (!endDate ? null : endDate.substring(0, 10)))(projectHistoryResponse.value.endDate),
+      expectedEndDate: ((expectedEndDate) => (!expectedEndDate ? null : expectedEndDate.substring(0, 10)))(
+        projectHistoryResponse.value.expectedEndDate,
+      ),
+      utilizationRate: projectHistoryResponse.value.utilizationRate,
+      salesContractCompany: projectHistoryResponse.value.salesContractCompany,
+      purchaseContractCompany: projectHistoryResponse.value.purchaseContractCompany,
+      contractType: projectHistoryResponse.value.contractType,
+      sales: projectHistoryResponse.value.sales,
+      cost: projectHistoryResponse.value.cost,
+      projectId: projectHistoryResponse.value.projectId,
+      engineerId: projectHistoryResponse.value.engineerId,
+    };
+  });
+
+  const reloadProjectHistoryResponse = async () => {
+    projectHistoryResponse.value = await getProjectHistory(String(route.query.projectHistoryId));
   };
-});
 
-const reloadProjectHistoryResponse = async () => {
-  projectHistoryResponse.value = await getProjectHistory(
-    String(route.query.projectHistoryId),
-  );
-};
+  const postProjectHistory = async () => {
+    await updateProjectHistory(String(route.query.projectHistoryId), projectHistoryForm.value);
 
-const postProjectHistory = async () => {
-  await updateProjectHistory(
-    String(route.query.projectHistoryId),
-    projectHistoryForm.value,
-  );
+    goEngineerDetail(projectHistoryForm.value.engineerId);
+  };
 
-  goEngineerDetail(projectHistoryForm.value.engineerId);
-};
-
-const goEngineerDetail = (engineerId: number | null) => {
-  if (engineerId) {
-    router.push(`/engineer-detail?engineerId=${engineerId}`);
-  }
-};
-onMounted(() => {
-  reloadProjectHistoryResponse();
-});
+  const goEngineerDetail = (engineerId: number | null) => {
+    if (engineerId) {
+      router.push(`/engineer-detail?engineerId=${engineerId}`);
+    }
+  };
+  onMounted(() => {
+    reloadProjectHistoryResponse();
+  });
 </script>
 
 <template>
-  <dl
-    class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700"
-  >
+  <dl class="max-w-md text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
     <div class="flex flex-col py-3">
       <dt class="mb-1 text-gray-500 md:text-lg dark:text-gray-400">所属</dt>
       <dd class="text-lg font-semibold">
@@ -119,11 +108,11 @@ onMounted(() => {
         <div />
         <div class="relative z-0 mb-6 w-full group">
           <input
-            type="date"
             id="floating_startDate"
+            v-model="projectHistoryForm.startDate"
+            type="date"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
-            v-model="projectHistoryForm.startDate"
             required
           />
           <label
@@ -134,11 +123,11 @@ onMounted(() => {
         </div>
         <div class="relative z-0 mb-6 w-full group">
           <input
-            type="date"
             id="floating_expectedEndDate"
+            v-model="projectHistoryForm.expectedEndDate"
+            type="date"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
-            v-model="projectHistoryForm.expectedEndDate"
           />
           <label
             for="floating_expectedEndDate"
@@ -149,11 +138,11 @@ onMounted(() => {
 
         <div class="relative z-0 mb-6 w-full group">
           <input
-            type="date"
             id="floating_endDate"
+            v-model="projectHistoryForm.endDate"
+            type="date"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
-            v-model="projectHistoryForm.endDate"
           />
           <label
             for="floating_endDate"
@@ -163,11 +152,11 @@ onMounted(() => {
         </div>
         <div class="relative z-0 mb-6 w-full group">
           <input
-            type="number"
             id="floating_utilizationRate"
+            v-model="projectHistoryForm.utilizationRate"
+            type="number"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
-            v-model="projectHistoryForm.utilizationRate"
             required
           />
           <label
@@ -178,11 +167,11 @@ onMounted(() => {
         </div>
         <div class="relative z-0 mb-6 w-full group">
           <input
-            type="number"
             id="floating_sales"
+            v-model="projectHistoryForm.sales"
+            type="number"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
-            v-model="projectHistoryForm.sales"
             required
           />
           <label
@@ -193,11 +182,11 @@ onMounted(() => {
         </div>
         <div class="relative z-0 mb-6 w-full group">
           <input
-            type="number"
             id="floating_cost"
+            v-model="projectHistoryForm.cost"
+            type="number"
             class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
-            v-model="projectHistoryForm.cost"
           />
           <label
             for="floating_cost"

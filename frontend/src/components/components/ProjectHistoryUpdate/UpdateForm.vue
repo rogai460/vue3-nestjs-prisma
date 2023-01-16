@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { ProjectHistoryForm } from '@/functions/Repository';
+  import { ref, computed, onMounted } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
+  import { ProjectHistoryForm } from '@/functions/Repository';
 
-defineProps<{
-  projectHistoryForm: ProjectHistoryForm;
-}>();
+  defineProps<{
+    projectHistoryForm: ProjectHistoryForm;
+  }>();
 
-// const emit = defineEmits(["projectHistoryForm"]);
+  // const emit = defineEmits(["projectHistoryForm"]);
 
-// const route = useRoute();
-// const engineerId = route.query.engineerId;
-const projectHistoryFormModel = ref<ProjectHistoryForm>();
+  // const route = useRoute();
+  // const engineerId = route.query.engineerId;
+  const projectHistoryFormModel = ref<ProjectHistoryForm>();
 
-onMounted(() => {
-  // projectHistoryFormModel.value = projectHistoryForm;
-  projectHistoryFormModel.value = {
-    id: 1,
-    startDate: '2022-11-11',
-    endDate: null,
-    expectedEndDate: null,
-    utilizationRate: null,
-    salesContractCompany: null,
-    purchaseContractCompany: null,
-    contractType: null,
-    sales: null,
-    cost: null,
-    projectId: null,
-    engineerId: null,
-  };
-});
+  onMounted(() => {
+    // projectHistoryFormModel.value = projectHistoryForm;
+    projectHistoryFormModel.value = {
+      id: 1,
+      startDate: '2022-11-11',
+      endDate: null,
+      expectedEndDate: null,
+      utilizationRate: null,
+      salesContractCompany: null,
+      purchaseContractCompany: null,
+      contractType: null,
+      sales: null,
+      cost: null,
+      projectId: null,
+      engineerId: null,
+    };
+  });
 </script>
 
 <template>
@@ -37,9 +37,9 @@ onMounted(() => {
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 mb-6 w-full group">
         <input
+          id="floating_first_name"
           type="text"
           name="floating_first_name"
-          id="floating_first_name"
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
           placeholder=" "
           required
@@ -52,9 +52,9 @@ onMounted(() => {
       </div>
       <div class="relative z-0 mb-6 w-full group">
         <input
+          id="floating_last_name"
           type="date"
           name="floating_last_name"
-          id="floating_last_name"
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
           placeholder=" "
           required
@@ -69,10 +69,10 @@ onMounted(() => {
     <div class="grid md:grid-cols-2 md:gap-6">
       <div class="relative z-0 mb-6 w-full group">
         <input
+          id="floating_phone"
           type="tel"
           pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
           name="floating_phone"
-          id="floating_phone"
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
           placeholder=" "
           required
@@ -85,9 +85,9 @@ onMounted(() => {
       </div>
       <div class="relative z-0 mb-6 w-full group">
         <input
+          id="floating_company"
           type="text"
           name="floating_company"
-          id="floating_company"
           class="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
           placeholder=" "
           required

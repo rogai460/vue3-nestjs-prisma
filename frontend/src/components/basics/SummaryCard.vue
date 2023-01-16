@@ -1,15 +1,13 @@
 <script setup lang="ts">
-defineProps<{
-  icon: string;
-  title: string;
-  value: string;
-}>();
+  defineProps<{
+    icon: string;
+    title: string;
+    value: string;
+  }>();
 </script>
 <template>
   <!--Metric Card-->
-  <div
-    class="bg-white border rounded shadow p-2 dark:bg-gray-800 dark:border-gray-700"
-  >
+  <div class="bg-white border rounded shadow p-2 dark:bg-gray-800 dark:border-gray-700">
     <div class="flex flex-row items-center">
       <div class="flex-shrink pr-4">
         <div v-if="icon === 'fa-wallet'" class="rounded p-3 bg-green-600">
@@ -22,9 +20,7 @@ defineProps<{
           <i class="fas fa-user-plus fa-2x fa-fw fa-inverse"></i>
         </div>
       </div>
-      <div
-        class="flex-1 text-right md:text-center text-gray-900 dark:text-white"
-      >
+      <div class="flex-1 text-right md:text-center text-gray-900 dark:text-white">
         <h5 class="font-bold uppercase font-semibold tracking-tight">
           {{ title }}
         </h5>
